@@ -3,7 +3,7 @@
 	"short_name": "determinant",
     "icons": [
         {
-            "src": "./images/matrix_square.png",
+            "src": "./images/matrix_square.svg",
             "sizes": "192x192 512x512"
         }
     ],
