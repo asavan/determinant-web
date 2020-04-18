@@ -1,0 +1,109 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.field {
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.box {
+
+    max-width: 450px;
+    max-height: 450px;
+    width: 100%;
+    /*min-width: 600px;*/
+    /*height: 100vw;*/
+
+    /*display: inline-block;*/
+}
+
+.digits {
+    /*display: inline-block;*/
+    align-self: center;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+
+
+.install {
+    margin-top: 20px;
+    max-width: 450px;
+    background-color: royalblue;
+    text-align: center;
+    font: bold 24px/100px Tahoma, sans;
+    height: calc((100vw - 42px) / 3);
+    max-height: 100px;
+    width: 100%;
+    cursor: pointer;
+}
+
+
+.hidden {
+    display: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100px;
+}
+
+.cell {
+    display: inline-block;
+    max-width: 120px;
+    width: calc((100vw - 56px) / 3);
+    height: calc((100vw - 56px) / 3);
+    max-height: 120px;
+    border: solid 2px gray;
+    margin: 5px;
+    text-align: center;
+    font: bold 24px/100px Tahoma, sans;
+    border-radius: 10px;
+    background-color: #F0F8FF;
+    touch-action: none;
+    user-select: none;
+    cursor: grab;
+}
+
+.cell:active {
+    cursor: grabbing;
+}
+
+.disabled {
+    cursor: not-allowed;
+    pointer-events: none;
+    color: #c0c0c0;
+    background-color: #ffffff;
+}
+
+.hole {
+    /*visibility: hidden;*/
+    /*border: solid 2px white;*/
+    /*background-color: white;*/
+    color: transparent;
+    cursor: default;
+}
+
+.last {
+   border: solid 2px red;
+}
+
+
+.win {
+    background-color: red;
+}
+
+.win .hole {
+    border: solid 2px red;
+    background-color: red;
+}
+
+.active {
+    background-color: blue;
+}
