@@ -23,10 +23,8 @@ function game(window, document) {
     const INF = 500;
     const MINUS_INF = -500;
     const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    const digits_result = [];
     let bestK = -1;
     let bestPos = -1;
-
 
     const is_first = function (step) {
         return step % 2 === 0;
@@ -91,12 +89,7 @@ function game(window, document) {
         return is_first(step) ? best2 : best1;
     };
 
-    const solve_matrix_flat = function (matrix_) {
-
-        const matrix = [];
-        copy_matrix(matrix_, matrix);
-
-        const digits = [];
+    function fill_digits(matrix, digits) {
         let step = 0;
         for (let i = 0; i < size_sqr; ++i) {
             const value = matrix[i];
@@ -106,9 +99,18 @@ function game(window, document) {
                 digits[index] = true;
             }
         }
+        return step;
+    }
 
+    const solve_matrix_flat = function (matrix_) {
 
-        return who_wins(matrix, digits, step, INF, MINUS_INF, true);
+        const matrix = [];
+        copy_matrix(matrix_, matrix);
+
+        const digits_local = [];
+        let step = fill_digits(matrix, digits_local);
+
+        return who_wins(matrix, digits_local, step, INF, MINUS_INF, true);
     };
 
     const getIndex = function(e, parent) {
@@ -125,45 +127,48 @@ function game(window, document) {
         if (!evt.target.classList.contains('cell')) {
             return;
         }
-        if (activeCell) {
-            activeCell.classList.remove('active');
-        }
-        activeCell = evt.target;
-        activeCell.classList.add('active');
         return getIndex(evt, parent);
-    };
-
-    const getStep = function(matrix) {
-        let step = 0;
-        for (let i = 0; i < size_sqr; ++i) {
-            const value = matrix[i];
-            if (value !== 0) {
-                ++step;
-            }
-        }
-        return step;
     };
 
     function doStep() {
         if (activeCellIndex >= 0 && activeDigitIndex >= 0) {
+            if (matrix_result[activeCellIndex] > 0) {
+                activeCellIndex = -1;
+                activeCell = null;
+                drawWithAnimation();
+                return;
+            }
+            const digits_local = [];
+            const step = fill_digits(matrix_result, digits_local);
+            if (digits_local[activeDigitIndex]) {
+                activeDigitIndex = -1;
+                activeDigit = null;
+                drawWithAnimation();
+                return;
+            }
+
             matrix_result[activeCellIndex] = activeDigitIndex + 1;
             drawWithAnimation();
-            bestPos = activeCellIndex;
-            bestK = activeDigitIndex;
-            console.time("solve_matrix_flat");
-            const result = solve_matrix_flat(matrix_result);
-            console.timeEnd("solve_matrix_flat");
+            setTimeout(function() {
+                bestPos = activeCellIndex;
+                bestK = activeDigitIndex;
+                const result = solve_matrix_flat(matrix_result);
+
+                activeCellIndex = -1;
+                activeDigitIndex = -1;
+                activeCell = null;
+                activeDigit = null;
+                drawWithAnimation();
+                if (step > 5) {
+                    let message = result > 0 ? "You win" : "You lose";
+                    message += " " + result;
+                    setTimeout(function () {
+                        alert(message);
+                    }, 300);
+                }
+            }, 100);
+        } else {
             drawWithAnimation();
-            activeCellIndex = -1;
-            activeDigitIndex = -1;
-            activeCell = null;
-            activeDigit = null;
-            const step = getStep(matrix_result);
-            if (step >= 8) {
-                let message = result > 0 ? "You win" : "You lose";
-                message += " " + result;
-                setTimeout(function() { alert(message); }, 300);
-            }
         }
     }
 
@@ -236,8 +241,6 @@ function game(window, document) {
         for (let i = 0; i < size_sqr; i++) {
             const tile = box.childNodes[i];
             const val = matrix_result[i];
-            digits_local[i] = val > 0;
-
             tile.textContent = val.toString();
             tile.style.backgroundColor = "";
             tile.style.transform = "";
@@ -248,10 +251,14 @@ function game(window, document) {
             } else {
                 tile.className = 'cell hole';
             }
+            if (activeCellIndex === i) {
+                tile.classList.add('active');
+            }
             if (i === bestPos) {
                 tile.classList.add("last");
             }
         }
+        fill_digits(matrix_result, digits_local);
 
         for (let i = 0; i < size_sqr; i++) {
             const tile = digits.childNodes[i];
@@ -266,6 +273,9 @@ function game(window, document) {
                 tile.className = 'cell';
             } else {
                 tile.className = 'cell disabled';
+            }
+            if (activeDigitIndex === i) {
+                tile.classList.add('active');
             }
             if (i === bestK) {
                 tile.classList.add("last");
