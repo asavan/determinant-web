@@ -2,8 +2,13 @@
 function game(window, document) {
 
     //Constants
+    const animationTime = 100;
+    const size = 3;
+    const size_sqr = size * size;
+    const INF = 500;
+    const MINUS_INF = -500;
 
-    const determinant = function (a) {
+    const determinant3 = function (a) {
         return a[0] * a[4] * a[8] +
             a[6] * a[1] * a[5] +
             a[3] * a[7] * a[2]
@@ -13,15 +18,8 @@ function game(window, document) {
     };
 
 
-    let activeCell = null;
     let activeCellIndex = -1;
-    let activeDigit = null;
     let activeDigitIndex = -1;
-    const animationTime = 100;
-    const size = 3;
-    const size_sqr = size * size;
-    const INF = 500;
-    const MINUS_INF = -500;
     const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     let bestK = -1;
     let bestPos = -1;
@@ -39,7 +37,7 @@ function game(window, document) {
     const who_wins = function (matrix, digits, step, best1, best2, need_push_result) {
 
         if (step === size_sqr) {
-            return determinant(matrix);
+            return determinant3(matrix);
         }
 
         for (let k = 0; k < size_sqr; ++k) {
@@ -121,9 +119,8 @@ function game(window, document) {
         return -1;
     };
 
-    const handleClick = function (evt, activeCell, parent) {
+    const handleClick = function (evt, parent) {
         evt.preventDefault();
-        // console.log(evt.target)
         if (!evt.target.classList.contains('cell')) {
             return;
         }
@@ -131,54 +128,47 @@ function game(window, document) {
     };
 
     function doStep() {
-        if (activeCellIndex >= 0 && activeDigitIndex >= 0) {
+        if (activeCellIndex >= 0) {
             if (matrix_result[activeCellIndex] > 0) {
                 activeCellIndex = -1;
-                activeCell = null;
-                drawWithAnimation();
-                return;
             }
+        }
+        let step = -1;
+        if (activeDigitIndex >= 0) {
             const digits_local = [];
-            const step = fill_digits(matrix_result, digits_local);
+            step = fill_digits(matrix_result, digits_local);
             if (digits_local[activeDigitIndex]) {
                 activeDigitIndex = -1;
-                activeDigit = null;
-                drawWithAnimation();
-                return;
             }
-
+        }
+        if (activeCellIndex >= 0 && activeDigitIndex >= 0) {
             matrix_result[activeCellIndex] = activeDigitIndex + 1;
-            drawWithAnimation();
             setTimeout(function() {
                 bestPos = activeCellIndex;
                 bestK = activeDigitIndex;
                 const result = solve_matrix_flat(matrix_result);
-
                 activeCellIndex = -1;
                 activeDigitIndex = -1;
-                activeCell = null;
-                activeDigit = null;
                 drawWithAnimation();
                 if (step > 5) {
                     let message = result > 0 ? "You win" : "You lose";
                     message += " " + result;
                     setTimeout(function () {
                         alert(message);
-                    }, 300);
+                    }, animationTime);
                 }
-            }, 100);
-        } else {
-            drawWithAnimation();
+            }, animationTime);
         }
+        drawWithAnimation();
     }
 
     const handleBox = function (evt) {
-        activeCellIndex = handleClick(evt, activeCell, box);
+        activeCellIndex = handleClick(evt, box);
         doStep();
     };
 
     const handleClickDigits = function (evt) {
-        activeDigitIndex = handleClick(evt, activeDigit, digits);
+        activeDigitIndex = handleClick(evt, digits);
         doStep();
     };
 
@@ -268,11 +258,10 @@ function game(window, document) {
             tile.style.backgroundColor = "";
             tile.style.transform = "";
             tile.style.transition = "";
+            tile.className = 'cell';
 
-            if (!used) {
-                tile.className = 'cell';
-            } else {
-                tile.className = 'cell disabled';
+            if (used) {
+                tile.classList.add('disabled');
             }
             if (activeDigitIndex === i) {
                 tile.classList.add('active');
@@ -281,7 +270,6 @@ function game(window, document) {
                 tile.classList.add("last");
             }
         }
-
     }
 
     box.addEventListener("click", handleBox, false);
