@@ -17,17 +17,11 @@ function game(window, document) {
     let activeCellIndex = -1;
     let activeDigit = null;
     let activeDigitIndex = -1;
-    let startPoint = null;
-    let prevPoint = null;
-    let startIndex = null;
-    let hasHiddenMove = false;
     const animationTime = 100;
     const size = 3;
     const size_sqr = size * size;
     const INF = 500;
     const MINUS_INF = -500;
-    let wasWinning = false;
-    const matrix_global = [];
     const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
     const digits_result = [];
     let bestK = -1;
@@ -79,7 +73,7 @@ function game(window, document) {
                 }
 
                 if (save_result) {
-                    copy_matrix_and_digits(matrix);
+                    copy_matrix(matrix, matrix_result);
                     bestPos = i;
                     bestK = k;
                 }
@@ -97,66 +91,24 @@ function game(window, document) {
         return is_first(step) ? best2 : best1;
     };
 
-    function copy_matrix_and_digits(matrix) {
-        const digits = [];
-        let step = 0;
-        for (let i = 0; i < size_sqr; ++i) {
-            const value = matrix[i];
-            if (value !== 0) {
-                ++step;
-                let index = value - 1;
-                digits[index] = true;
-            }
-            matrix_result[i] = matrix[i];
-        }
-
-        for (let i = 0; i < size_sqr; ++i) {
-            digits_result[i] = digits[i];
-        }
-        return step;
-    }
-
     const solve_matrix_flat = function (matrix_) {
 
         const matrix = [];
-        for (let i = 0; i < size_sqr; ++i) {
-            matrix[i] = matrix_[i];
-        }
+        copy_matrix(matrix_, matrix);
+
         const digits = [];
         let step = 0;
         for (let i = 0; i < size_sqr; ++i) {
             const value = matrix[i];
-            if (value !== 0) {
+            if (value > 0) {
                 ++step;
                 let index = value - 1;
-                if (digits[index]) {
-                    // handle this
-                    // return -1000;
-                }
                 digits[index] = true;
             }
-            matrix_result[i] = matrix[i];
         }
 
-        for (let i = 0; i < size_sqr; ++i) {
-            digits_result[i] = digits[i];
-        }
 
         return who_wins(matrix, digits, step, INF, MINUS_INF, true);
-    };
-
-
-    function pointFromTouch(touch) {
-        const point = {};
-        point.x = touch.pageX || touch.clientX;
-        point.y = touch.pageY || touch.clientY;
-        return point;
-    }
-
-    const pointFromEvent = function (evt) {
-        const touches = evt.changedTouches;
-        const eventPointer = touches ? touches[0] : evt;
-        return pointFromTouch(eventPointer);
     };
 
     const getIndex = function(e, parent) {
@@ -240,8 +192,8 @@ function game(window, document) {
         draw();
     }
 
-    const box = document.getElementsByClassName("box")[0]; // document.body.appendChild(document.createElement('div'));
-    const digits = document.getElementsByClassName("digits")[0]; // document.body.appendChild(document.createElement('div'));
+    const box = document.getElementsByClassName("box")[0];
+    const digits = document.getElementsByClassName("digits")[0];
 
     for (let i = 0; i < size_sqr; i++) {
         const cell = document.createElement('div');
@@ -280,10 +232,13 @@ function game(window, document) {
 
 
     function draw() {
+        const digits_local = [];
         for (let i = 0; i < size_sqr; i++) {
             const tile = box.childNodes[i];
             const val = matrix_result[i];
-            tile.textContent = val;
+            digits_local[i] = val > 0;
+
+            tile.textContent = val.toString();
             tile.style.backgroundColor = "";
             tile.style.transform = "";
             tile.style.transition = "";
@@ -300,9 +255,9 @@ function game(window, document) {
 
         for (let i = 0; i < size_sqr; i++) {
             const tile = digits.childNodes[i];
-            const used = digits_result[i];
+            const used = digits_local[i];
             const val = i+1;
-            tile.textContent = val;
+            tile.textContent = val.toString();
             tile.style.backgroundColor = "";
             tile.style.transform = "";
             tile.style.transition = "";
@@ -318,19 +273,6 @@ function game(window, document) {
         }
 
     }
-
-
-    function maxTranslate(dist, width) {
-        if (dist >= 0) {
-            return Math.min(dist, width);
-        }
-        return Math.max(dist, -width);
-    }
-
-    function getCellByIndex(i) {
-        return box.childNodes[i];
-    }
-
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
