@@ -14,10 +14,8 @@ function precache() {
         return cache.addAll([
             './',
             './game.js',
-            './gamepad.js',
             './game.css',
-            './images/matrix_square.svg',
-            './images/reload.svg'
+            './images/matrix_square.svg'
         ]);
     });
 }
