@@ -3,10 +3,34 @@
     padding: 0;
 }
 
-.field {
-    margin-top: 20px;
+html,
+body {
+    height: 100%;
+}
+
+body {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1 0 auto;
+
+    /*padding: 1rem;!*это свойство можно удалить, добавлено для наглядности*!*/
+    /*background: #e6f2ff;!*это свойство можно удалить, добавлено для наглядности*!*/
+}
+
+footer {
+    flex: 0 0 auto;
+
+    padding: 5px;/*это свойство можно удалить, добавлено для наглядности*/
+    /*background: #e6ffe6;!*это свойство можно удалить, добавлено для наглядности*!*/
+}
+
+.field {
+    /*margin-top: 20px;*/
+    display: flex;
+    /*flex-wrap: wrap;*/
 }
 
 .box {
@@ -28,20 +52,46 @@
     min-width: 350px;
 }
 
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 5px 0;
+
+    padding: 0;
+}
+
+@media (max-width: 600px)  {
+
+}
+
+@media (max-width: 700px)  {
+    .field  {
+        flex-wrap: wrap;
+        /*width: 100%;*/
+    }
+    hr {
+        width: 100%;
+    }
+    .digits {
+        background: #e6f2ff;
+    }
+}
+
 
 
 .install {
-    margin-top: 20px;
-    max-width: 450px;
-    background-color: royalblue;
+    /*margin-top: 20px;*/
+    background-color: lightgrey;
     text-align: center;
     font: bold 24px/100px Tahoma, sans;
     height: calc((100vw - 42px) / 3);
     max-height: 100px;
     width: 100%;
+    /*color: #ffffff;*/
     cursor: pointer;
 }
-
 
 .hidden {
     display: none;
@@ -92,9 +142,8 @@ img {
 }
 
 .last {
-   border: solid 2px red;
+    border: solid 2px red;
 }
-
 
 .win {
     background-color: red;
@@ -106,5 +155,5 @@ img {
 }
 
 .active {
-    background-color: blue;
+    background-color: royalblue;
 }
