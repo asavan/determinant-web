@@ -5,121 +5,187 @@ function game(window, document) {
     const animationTime = 100;
     const size = 3;
     const size_sqr = size * size;
-    const INF = 500;
-    const MINUS_INF = -500;
 
-    const determinant3 = function (a) {
-        return a[0] * a[4] * a[8] +
-            a[6] * a[1] * a[5] +
-            a[3] * a[7] * a[2]
-            - a[2] * a[4] * a[6]
-            - a[1] * a[3] * a[8]
-            - a[0] * a[5] * a[7];
-    };
 
+    const solver = function () {
+
+        const INF = 500;
+        const MINUS_INF = -500;
+        let outer_matrix = [];
+
+        let bestK = -1;
+        let bestPos = -1;
+
+        const determinant3 = function (a) {
+            return a[0] * a[4] * a[8] +
+                a[6] * a[1] * a[5] +
+                a[3] * a[7] * a[2]
+                - a[2] * a[4] * a[6]
+                - a[1] * a[3] * a[8]
+                - a[0] * a[5] * a[7];
+        };
+
+        const is_first = function (step) {
+            return step % 2 === 0;
+        };
+
+        const copy_matrix = function (src, dst) {
+            for (let i = 0; i < size_sqr; ++i) {
+                dst[i] = src[i];
+            }
+        };
+
+        const who_wins = function (matrix, digits, step, best1, best2) {
+
+            if (step === size_sqr) {
+                return determinant3(matrix);
+            }
+
+            for (let k = 0; k < size_sqr; ++k) {
+                if (digits[k]) {
+                    continue;
+                }
+                digits[k] = true;
+                const end = step === 1 ? 6 : size_sqr;
+                for (let i = 0; i < end; ++i) {
+                    if (matrix[i] !== 0) {
+                        continue;
+                    }
+                    let save_result = false;
+                    matrix[i] = k + 1;
+                    const res = who_wins(matrix, digits, step + 1, best1, best2);
+
+
+                    if (is_first(step)) {
+                        if (best2 < res) {
+                            best2 = res;
+                        }
+                    }
+                    else {
+                        if (best1 > res) {
+                            best1 = res;
+                        }
+                    }
+
+                    matrix[i] = 0;
+
+                    if ((!is_first(step) && res <= best2) || (is_first(step) && res >= best1)) {
+                        digits[k] = false;
+                        return res;
+                    }
+
+                }
+                digits[k] = false;
+            }
+            return is_first(step) ? best2 : best1;
+        };
+
+        function fill_digits(matrix, digits) {
+            let step = 0;
+            for (let i = 0; i < size_sqr; ++i) {
+                const value = matrix[i];
+                if (value > 0) {
+                    ++step;
+                    let index = value - 1;
+                    digits[index] = true;
+                }
+            }
+            return step;
+        }
+
+        const solve_matrix_flat = function (matrix_) {
+
+            const matrix = [];
+            copy_matrix(matrix_, matrix);
+
+            const digits = [];
+            let step = fill_digits(matrix, digits);
+            let best1 = INF;
+            let best2 = MINUS_INF;
+            const isFirstStep = is_first(step);
+            if (step === size_sqr) {
+                best1 = who_wins(matrix, digits, step, best1, best2);
+                bestK = -1;
+                bestPos = -1;
+            }
+
+            for (let k = 0; k < size_sqr; ++k) {
+                if (digits[k]) {
+                    continue;
+                }
+                digits[k] = true;
+                const end = step === 1 ? 6 : size_sqr;
+                for (let i = 0; i < end; ++i) {
+                    if (matrix[i] !== 0) {
+                        continue;
+                    }
+                    let save_result = false;
+                    matrix[i] = k + 1;
+                    const res = who_wins(matrix, digits, step + 1, best1, best2);
+
+
+                    if (isFirstStep) {
+                        if (best2 < res) {
+                            best2 = res;
+                            save_result = true;
+                        }
+                    }
+                    else {
+                        if (best1 > res) {
+                            best1 = res;
+                            save_result = true;
+                        }
+                    }
+
+                    if (save_result) {
+                        copy_matrix(matrix, matrix_);
+                        bestPos = i;
+                        bestK = k;
+                    }
+
+                    matrix[i] = 0;
+                }
+                digits[k] = false;
+            }
+            const result = isFirstStep ? best2 : best1;
+            return {result, bestK, bestPos};
+        };
+
+        const getBestPos = function () {
+            return bestPos;
+        };
+
+        const getBestDigit = function () {
+            return bestK;
+        };
+
+        return {
+            solve_matrix_flat: solve_matrix_flat,
+            fill_digits: fill_digits,
+            getBestDigit: getBestDigit,
+            getBestPos: getBestPos
+        }
+    }();
 
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
-    const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    let bestK = -1;
+
+    let bestDigit = -1;
     let bestPos = -1;
-
-    const is_first = function (step) {
-        return step % 2 === 0;
-    };
-
-    const copy_matrix = function(src, dst) {
-        for (let i = 0; i < size_sqr; ++i) {
-            dst[i] = src[i];
-        }
-    };
-
-    const who_wins = function (matrix, digits, step, best1, best2, need_push_result) {
-
-        if (step === size_sqr) {
-            return determinant3(matrix);
-        }
-
-        for (let k = 0; k < size_sqr; ++k) {
-            if (digits[k]) {
-                continue;
-            }
-            digits[k] = true;
-            const end = step === 1 ? 6 : size_sqr;
-            for (let i = 0; i < end; ++i) {
-                if (matrix[i] !== 0) {
-                    continue;
-                }
-                let save_result = false;
-                matrix[i] = k + 1;
-                const res = who_wins(matrix, digits, step + 1, best1, best2, false);
+    let currResult = 0;
+    const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
 
 
-                if (is_first(step)) {
-                    if (best2 < res) {
-                        best2 = res;
-                        save_result = need_push_result;
-                    }
-                }
-                else {
-                    if (best1 > res) {
-                        best1 = res;
-                        save_result = need_push_result;
-                    }
-                }
-
-                if (save_result) {
-                    copy_matrix(matrix, matrix_result);
-                    bestPos = i;
-                    bestK = k;
-                }
-
-                matrix[i] = 0;
-
-                if ((!is_first(step) && res <= best2) || (is_first(step) && res >= best1)) {
-                    digits[k] = false;
-                    return res;
-                }
-
-            }
-            digits[k] = false;
-        }
-        return is_first(step) ? best2 : best1;
-    };
-
-    function fill_digits(matrix, digits) {
-        let step = 0;
-        for (let i = 0; i < size_sqr; ++i) {
-            const value = matrix[i];
-            if (value > 0) {
-                ++step;
-                let index = value - 1;
-                digits[index] = true;
-            }
-        }
-        return step;
-    }
-
-    const solve_matrix_flat = function (matrix_) {
-
-        const matrix = [];
-        copy_matrix(matrix_, matrix);
-
-        const digits_local = [];
-        let step = fill_digits(matrix, digits_local);
-
-        return who_wins(matrix, digits_local, step, INF, MINUS_INF, true);
-    };
-
-    const getIndex = function(e, parent) {
-        const target = e.target || e.srcElement;
-        for(let i = 0; i < parent.children.length; i++) {
-            if(parent.children[i] === target) return i;
-        }
-        return -1;
-    };
 
     const handleClick = function (evt, parent) {
+        const getIndex = function (e, parent) {
+            const target = e.target || e.srcElement;
+            for (let i = 0; i < parent.children.length; i++) {
+                if (parent.children[i] === target) return i;
+            }
+            return -1;
+        };
+
         evt.preventDefault();
         if (!evt.target.classList.contains('cell')) {
             return;
@@ -136,17 +202,15 @@ function game(window, document) {
         let step = -1;
         if (activeDigitIndex >= 0) {
             const digits_local = [];
-            step = fill_digits(matrix_result, digits_local);
+            step = solver.fill_digits(matrix_result, digits_local);
             if (digits_local[activeDigitIndex]) {
                 activeDigitIndex = -1;
             }
         }
         if (activeCellIndex >= 0 && activeDigitIndex >= 0) {
             matrix_result[activeCellIndex] = activeDigitIndex + 1;
-            setTimeout(function() {
-                bestPos = activeCellIndex;
-                bestK = activeDigitIndex;
-                const result = solve_matrix_flat(matrix_result);
+            setTimeout(function () {
+                const result = solver.solve_matrix_flat(matrix_result).result;
                 activeCellIndex = -1;
                 activeDigitIndex = -1;
                 drawWithAnimation();
@@ -244,16 +308,16 @@ function game(window, document) {
             if (activeCellIndex === i) {
                 tile.classList.add('active');
             }
-            if (i === bestPos) {
+            if (i === solver.getBestPos()) {
                 tile.classList.add("last");
             }
         }
-        fill_digits(matrix_result, digits_local);
+        solver.fill_digits(matrix_result, digits_local);
 
         for (let i = 0; i < size_sqr; i++) {
             const tile = digits.childNodes[i];
             const used = digits_local[i];
-            const val = i+1;
+            const val = i + 1;
             tile.textContent = val.toString();
             tile.style.backgroundColor = "";
             tile.style.transform = "";
@@ -266,7 +330,7 @@ function game(window, document) {
             if (activeDigitIndex === i) {
                 tile.classList.add('active');
             }
-            if (i === bestK) {
+            if (i === solver.getBestDigit()) {
                 tile.classList.add("last");
             }
         }
