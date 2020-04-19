@@ -119,10 +119,27 @@ img {
     background-color: #F0F8FF;
     touch-action: none;
     user-select: none;
+}
+
+.digit {
+    display: inline-block;
+    max-width: 100px;
+    width: calc((100vw - 42px) / 3);
+    height: calc((100vw - 42px) / 3);
+    max-height: 100px;
+    border: solid 2px gray;
+    margin: 5px;
+    text-align: center;
+    font: bold 24px/100px Tahoma, sans;
+    border-radius: 10px;
+    background-color: #24d5ff;
+    touch-action: none;
+    user-select: none;
     cursor: grab;
 }
 
-.cell:active {
+
+.digit:active {
     cursor: grabbing;
 }
 

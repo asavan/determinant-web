@@ -226,7 +226,7 @@ function game(window, document) {
         };
 
         evt.preventDefault();
-        if (!evt.target.classList.contains('cell')) {
+        if (!(evt.target.classList.contains('cell') || evt.target.classList.contains('digit'))) {
             return;
         }
         return getIndex(evt, parent);
@@ -362,7 +362,7 @@ function game(window, document) {
             tile.style.backgroundColor = "";
             tile.style.transform = "";
             tile.style.transition = "";
-            tile.className = 'cell';
+            tile.className = 'digit';
 
             if (used) {
                 tile.classList.add('disabled');
