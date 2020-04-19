@@ -8,15 +8,17 @@ function game(window, document) {
 
 
     const solver = function () {
-
         const INF = 500;
         const MINUS_INF = -500;
-        let outer_matrix = [];
-
         let bestK = -1;
         let bestPos = -1;
 
-        const determinant3 = function (a) {
+        const randomInteger = (min, max) => {
+            let rand = min + Math.random() * (max - min);
+            return Math.floor(rand);
+        };
+
+        const determinant3 = a => {
             return a[0] * a[4] * a[8] +
                 a[6] * a[1] * a[5] +
                 a[3] * a[7] * a[2]
@@ -25,11 +27,9 @@ function game(window, document) {
                 - a[0] * a[5] * a[7];
         };
 
-        const is_first = function (step) {
-            return step % 2 === 0;
-        };
+        const is_first = step => step % 2 === 0;
 
-        const copy_matrix = function (src, dst) {
+        const copy_matrix = (src, dst) => {
             for (let i = 0; i < size_sqr; ++i) {
                 dst[i] = src[i];
             }
@@ -41,17 +41,23 @@ function game(window, document) {
                 return determinant3(matrix);
             }
 
+            let digits_count = 0;
             for (let k = 0; k < size_sqr; ++k) {
                 if (digits[k]) {
                     continue;
                 }
+
+                ++digits_count;
+                // TODO check this
+                if (digits_count === 2 && step === size_sqr-2) {
+                    break;
+                }
+
                 digits[k] = true;
-                const end = step === 1 ? 6 : size_sqr;
-                for (let i = 0; i < end; ++i) {
+                for (let i = 0; i < size_sqr; ++i) {
                     if (matrix[i] !== 0) {
                         continue;
                     }
-                    let save_result = false;
                     matrix[i] = k + 1;
                     const res = who_wins(matrix, digits, step + 1, best1, best2);
 
@@ -109,6 +115,14 @@ function game(window, document) {
                 bestPos = -1;
             }
 
+            if (step === 0) {
+                best2 = 40;
+                bestK = 4;
+                bestPos = randomInteger(0, size_sqr);
+                return {result: best2, bestK: bestK, bestPos: bestPos};
+            }
+
+
             for (let k = 0; k < size_sqr; ++k) {
                 if (digits[k]) {
                     continue;
@@ -138,7 +152,7 @@ function game(window, document) {
                     }
 
                     if (save_result) {
-                        copy_matrix(matrix, matrix_);
+                        // copy_matrix(matrix, matrix_);
                         bestPos = i;
                         bestK = k;
                     }
@@ -148,34 +162,59 @@ function game(window, document) {
                 digits[k] = false;
             }
             const result = isFirstStep ? best2 : best1;
-            return {result, bestK, bestPos};
-        };
-
-        const getBestPos = function () {
-            return bestPos;
-        };
-
-        const getBestDigit = function () {
-            return bestK;
+            return {result: result, bestK: bestK, bestPos: bestPos};
         };
 
         return {
             solve_matrix_flat: solve_matrix_flat,
             fill_digits: fill_digits,
-            getBestDigit: getBestDigit,
-            getBestPos: getBestPos
+            isFirstStep: is_first
         }
     }();
 
-    let activeCellIndex = -1;
-    let activeDigitIndex = -1;
+    const presenter = function (solver_) {
+        let activeCellIndex = -1;
+        let activeDigitIndex = -1;
 
-    let bestDigit = -1;
-    let bestPos = -1;
-    let currResult = 0;
-    const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        let bestDigit = -1;
+        let bestPos = -1;
+        let currResult = 0;
+        const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        const makeMove = function () {
+            console.time("stepTime");
+            const res = solver_.solve_matrix_flat(matrix_result);
+            console.timeEnd("stepTime");
+            console.log(res.result);
+            currResult = res.result;
+            bestPos = res.bestPos;
+            bestDigit = res.bestK;
+            if (bestPos >= 0) {
+                matrix_result[bestPos] = bestDigit + 1;
+            }
 
+            activeCellIndex = -1;
+            activeDigitIndex = -1;
+        };
+        const getResult = function () {
+            return currResult;
+        };
+        const getBestPos = function () {
+            return bestPos;
+        };
 
+        const getBestDigit = function () {
+            return bestDigit;
+        };
+        return {
+            activeCellIndex: activeCellIndex,
+            activeDigitIndex: activeDigitIndex,
+            matrix_result: matrix_result,
+            makeMove: makeMove,
+            getBestDigit: getBestDigit,
+            getBestPos: getBestPos,
+            getResult: getResult
+        }
+    }(solver);
 
     const handleClick = function (evt, parent) {
         const getIndex = function (e, parent) {
@@ -194,29 +233,30 @@ function game(window, document) {
     };
 
     function doStep() {
-        if (activeCellIndex >= 0) {
-            if (matrix_result[activeCellIndex] > 0) {
-                activeCellIndex = -1;
+        if (presenter.activeCellIndex >= 0) {
+            if (presenter.matrix_result[presenter.activeCellIndex] > 0) {
+                presenter.activeCellIndex = -1;
             }
         }
         let step = -1;
-        if (activeDigitIndex >= 0) {
+        if (presenter.activeDigitIndex >= 0) {
             const digits_local = [];
-            step = solver.fill_digits(matrix_result, digits_local);
-            if (digits_local[activeDigitIndex]) {
-                activeDigitIndex = -1;
+            step = solver.fill_digits(presenter.matrix_result, digits_local);
+            if (digits_local[presenter.activeDigitIndex]) {
+                presenter.activeDigitIndex = -1;
             }
         }
-        if (activeCellIndex >= 0 && activeDigitIndex >= 0) {
-            matrix_result[activeCellIndex] = activeDigitIndex + 1;
+        if (presenter.activeCellIndex >= 0 && presenter.activeDigitIndex >= 0) {
+            presenter.matrix_result[presenter.activeCellIndex] = presenter.activeDigitIndex + 1;
+            presenter.activeCellIndex = -1;
+            presenter.activeDigitIndex = -1;
+            // log(step);
             setTimeout(function () {
-                const result = solver.solve_matrix_flat(matrix_result).result;
-                activeCellIndex = -1;
-                activeDigitIndex = -1;
+                presenter.makeMove();
                 drawWithAnimation();
                 if (step > 5) {
-                    let message = result > 0 ? "You win" : "You lose";
-                    message += " " + result;
+                    let message = ((presenter.getResult() > 0) && solver.isFirstStep(step)) ? "You win" : "You lose";
+                    message += " " + presenter.getResult();
                     setTimeout(function () {
                         alert(message);
                     }, animationTime);
@@ -227,12 +267,12 @@ function game(window, document) {
     }
 
     const handleBox = function (evt) {
-        activeCellIndex = handleClick(evt, box);
+        presenter.activeCellIndex = handleClick(evt, box);
         doStep();
     };
 
     const handleClickDigits = function (evt) {
-        activeDigitIndex = handleClick(evt, digits);
+        presenter.activeDigitIndex = handleClick(evt, digits);
         doStep();
     };
 
@@ -294,7 +334,7 @@ function game(window, document) {
         const digits_local = [];
         for (let i = 0; i < size_sqr; i++) {
             const tile = box.childNodes[i];
-            const val = matrix_result[i];
+            const val = presenter.matrix_result[i];
             tile.textContent = val.toString();
             tile.style.backgroundColor = "";
             tile.style.transform = "";
@@ -305,14 +345,14 @@ function game(window, document) {
             } else {
                 tile.className = 'cell hole';
             }
-            if (activeCellIndex === i) {
+            if (presenter.activeCellIndex === i) {
                 tile.classList.add('active');
             }
-            if (i === solver.getBestPos()) {
+            if (i === presenter.getBestPos()) {
                 tile.classList.add("last");
             }
         }
-        solver.fill_digits(matrix_result, digits_local);
+        solver.fill_digits(presenter.matrix_result, digits_local);
 
         for (let i = 0; i < size_sqr; i++) {
             const tile = digits.childNodes[i];
@@ -327,10 +367,10 @@ function game(window, document) {
             if (used) {
                 tile.classList.add('disabled');
             }
-            if (activeDigitIndex === i) {
+            if (presenter.activeDigitIndex === i) {
                 tile.classList.add('active');
             }
-            if (i === solver.getBestDigit()) {
+            if (i === presenter.getBestDigit()) {
                 tile.classList.add("last");
             }
         }
@@ -338,6 +378,9 @@ function game(window, document) {
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
+    // console.time("answer time");
+    // presenter.makeMove();
+    // console.timeEnd("answer time");
     drawWithAnimation();
 }
 
