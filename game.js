@@ -255,11 +255,12 @@ function game(window, document) {
                 presenter.makeMove();
                 drawWithAnimation();
                 if (step > 5) {
-                    let message = ((presenter.getResult() > 0) && solver.isFirstStep(step)) ? "You win" : "You lose";
-                    message += " " + presenter.getResult();
-                    setTimeout(function () {
-                        alert(message);
-                    }, animationTime);
+                    const message = ((presenter.getResult() > 0) && solver.isFirstStep(step)) ? "You win" : "You lose";
+                    const h2 = overlay.querySelectorAll('h2')[0];
+                    h2.textContent = message;
+                    const content = overlay.querySelectorAll('.content')[0];
+                    content.textContent = "Result " + presenter.getResult();
+                    overlay.classList.add('show');
                 }
             }, animationTime);
         }
@@ -288,11 +289,14 @@ function game(window, document) {
 
 
     function drawWithAnimation() {
+        // setTimeout(draw, 1000);
         draw();
     }
 
     const box = document.getElementsByClassName("box")[0];
     const digits = document.getElementsByClassName("digits")[0];
+    const overlay = document.getElementsByClassName("overlay")[0];
+    const close = document.getElementsByClassName("close")[0];
 
     for (let i = 0; i < size_sqr; i++) {
         const cell = document.createElement('div');
@@ -336,9 +340,6 @@ function game(window, document) {
             const tile = box.childNodes[i];
             const val = presenter.matrix_result[i];
             tile.textContent = val.toString();
-            tile.style.backgroundColor = "";
-            tile.style.transform = "";
-            tile.style.transition = "";
 
             if (val) {
                 tile.className = 'cell disabled';
@@ -352,6 +353,7 @@ function game(window, document) {
                 tile.classList.add("last");
             }
         }
+
         solver.fill_digits(presenter.matrix_result, digits_local);
 
         for (let i = 0; i < size_sqr; i++) {
@@ -359,9 +361,6 @@ function game(window, document) {
             const used = digits_local[i];
             const val = i + 1;
             tile.textContent = val.toString();
-            tile.style.backgroundColor = "";
-            tile.style.transform = "";
-            tile.style.transition = "";
             tile.className = 'digit';
 
             if (used) {
@@ -378,9 +377,10 @@ function game(window, document) {
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
-    // console.time("answer time");
-    // presenter.makeMove();
-    // console.timeEnd("answer time");
+    close.addEventListener("click", function (e) {
+        e.preventDefault();
+        overlay.classList.remove("show");
+    }, false);
     drawWithAnimation();
 }
 
