@@ -49,7 +49,7 @@ function game(window, document) {
 
                 ++digits_count;
                 // TODO check this
-                if (digits_count === 2 && step === size_sqr-2) {
+                if (digits_count === 2 && step === size_sqr - 2) {
                     break;
                 }
 
@@ -175,10 +175,13 @@ function game(window, document) {
     const presenter = function (solver_) {
         let activeCellIndex = -1;
         let activeDigitIndex = -1;
+        let lastCompMove = -1;
+        let lastUserMove = -1;
 
         let bestDigit = -1;
         let bestPos = -1;
         let currResult = 0;
+        let step = -1;
         const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         const player_moves = [false, false, false, false, false, false, false, false, false];
         const comp_moves = [false, false, false, false, false, false, false, false, false];
@@ -193,31 +196,71 @@ function game(window, document) {
             if (bestPos >= 0) {
                 matrix_result[bestPos] = bestDigit + 1;
                 comp_moves[bestPos] = true;
+                lastCompMove = bestPos;
             }
 
             activeCellIndex = -1;
             activeDigitIndex = -1;
         };
-        const getResult = function () {
-            return currResult;
-        };
-        const getBestPos = function () {
-            return bestPos;
+        const getResult = () => currResult;
+        const getLastCompMove = () => lastCompMove;
+
+        const getLastUserMove = () => lastUserMove;
+        const isUserDigit = (d) => matrix_result[lastUserMove] - 1;
+
+        const setUserMove = function (position, digit) {
+            matrix_result[position] = digit + 1;
+            player_moves[position] = true;
+            lastUserMove = position;
+            activeCellIndex = -1;
+            activeDigitIndex = -1;
         };
 
-        const getBestDigit = function () {
-            return bestDigit;
+        const setActiveDigitIndex = function (ind) {
+            step = -1;
+            if (ind >= 0) {
+                const digits_local = [];
+                step = solver.fill_digits(presenter.matrix_result, digits_local);
+                if (digits_local[ind]) {
+                    activeDigitIndex = -1;
+                    return;
+                }
+            }
+            activeDigitIndex = ind;
         };
+
+        const getActiveDigitIndex = () => activeDigitIndex;
+
+        const setActivePosition = function (pos) {
+            if (pos >= 0) {
+                if (matrix_result[pos] > 0) {
+                    activeCellIndex = -1;
+                    return;
+                }
+            }
+            activeCellIndex = pos;
+        };
+
+        const getActivePosition = () => activeCellIndex;
+
+        const getStep = () => step;
+
+
         return {
-            activeCellIndex: activeCellIndex,
-            activeDigitIndex: activeDigitIndex,
             matrix_result: matrix_result,
             player_moves: player_moves,
             comp_moves: comp_moves,
+            getLastCompMove: getLastCompMove,
+            getLastUserMove: getLastUserMove,
             makeMove: makeMove,
-            getBestDigit: getBestDigit,
-            getBestPos: getBestPos,
-            getResult: getResult
+            getResult: getResult,
+            setUserMove: setUserMove,
+            getActiveDigitIndex: getActiveDigitIndex,
+            setActiveDigitIndex: setActiveDigitIndex,
+            getActivePosition: getActivePosition,
+            setActivePosition: setActivePosition,
+            getStep: getStep
+
         }
     }(solver);
 
@@ -238,48 +281,33 @@ function game(window, document) {
     };
 
     function doStep() {
-        if (presenter.activeCellIndex >= 0) {
-            if (presenter.matrix_result[presenter.activeCellIndex] > 0) {
-                presenter.activeCellIndex = -1;
-            }
-        }
-        let step = -1;
-        if (presenter.activeDigitIndex >= 0) {
-            const digits_local = [];
-            step = solver.fill_digits(presenter.matrix_result, digits_local);
-            if (digits_local[presenter.activeDigitIndex]) {
-                presenter.activeDigitIndex = -1;
-            }
-        }
-        if (presenter.activeCellIndex >= 0 && presenter.activeDigitIndex >= 0) {
-            presenter.matrix_result[presenter.activeCellIndex] = presenter.activeDigitIndex + 1;
-            presenter.player_moves[presenter.activeCellIndex] = true;
-            presenter.activeCellIndex = -1;
-            presenter.activeDigitIndex = -1;
+        if (presenter.getActivePosition() >= 0 && presenter.getActiveDigitIndex() >= 0) {
+            presenter.setUserMove(presenter.getActivePosition(), presenter.getActiveDigitIndex());
+            drawWithAnimation();
             // log(step);
             setTimeout(function () {
                 presenter.makeMove();
                 drawWithAnimation();
-                if (step > 5) {
-                    const message = ((presenter.getResult() > 0) && solver.isFirstStep(step)) ? "You win" : "You lose";
+                if (presenter.getStep() > 5) {
+                    const message = ((presenter.getResult() > 0) && solver.isFirstStep(presenter.getStep())) ? "You win" : "You lose";
                     const h2 = overlay.querySelectorAll('h2')[0];
                     h2.textContent = message;
                     const content = overlay.querySelectorAll('.content')[0];
                     content.textContent = "Result " + presenter.getResult();
                     overlay.classList.add('show');
                 }
-            }, animationTime);
+            }, 5 * animationTime);
         }
         drawWithAnimation();
     }
 
     const handleBox = function (evt) {
-        presenter.activeCellIndex = handleClick(evt, box);
+        presenter.setActivePosition(handleClick(evt, box));
         doStep();
     };
 
     const handleClickDigits = function (evt) {
-        presenter.activeDigitIndex = handleClick(evt, digits);
+        presenter.setActiveDigitIndex(handleClick(evt, digits));
         doStep();
     };
 
@@ -352,7 +380,7 @@ function game(window, document) {
             } else {
                 tile.className = 'cell hole';
             }
-            if (presenter.activeCellIndex === i) {
+            if (presenter.getActivePosition() === i) {
                 tile.classList.add('active');
             }
             if (presenter.comp_moves[i]) {
@@ -361,7 +389,7 @@ function game(window, document) {
             if (presenter.player_moves[i]) {
                 tile.classList.add('player');
             }
-            if (i === presenter.getBestPos()) {
+            if (i === presenter.getLastUserMove() || i === presenter.getLastCompMove()) {
                 tile.classList.add('last');
             }
         }
@@ -378,11 +406,14 @@ function game(window, document) {
             if (used) {
                 tile.classList.add('disabled');
             }
-            if (presenter.activeDigitIndex === i) {
+            if (presenter.getActiveDigitIndex() === i) {
                 tile.classList.add('active');
             }
-            if (i === presenter.getBestDigit()) {
-                tile.classList.add('last');
+            if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
+                tile.classList.add('comp');
+            }
+            if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
+                tile.classList.add('player');
             }
         }
     }
