@@ -180,6 +180,8 @@ function game(window, document) {
         let bestPos = -1;
         let currResult = 0;
         const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        const player_moves = [false, false, false, false, false, false, false, false, false];
+        const comp_moves = [false, false, false, false, false, false, false, false, false];
         const makeMove = function () {
             console.time("stepTime");
             const res = solver_.solve_matrix_flat(matrix_result);
@@ -190,6 +192,7 @@ function game(window, document) {
             bestDigit = res.bestK;
             if (bestPos >= 0) {
                 matrix_result[bestPos] = bestDigit + 1;
+                comp_moves[bestPos] = true;
             }
 
             activeCellIndex = -1;
@@ -209,6 +212,8 @@ function game(window, document) {
             activeCellIndex: activeCellIndex,
             activeDigitIndex: activeDigitIndex,
             matrix_result: matrix_result,
+            player_moves: player_moves,
+            comp_moves: comp_moves,
             makeMove: makeMove,
             getBestDigit: getBestDigit,
             getBestPos: getBestPos,
@@ -248,6 +253,7 @@ function game(window, document) {
         }
         if (presenter.activeCellIndex >= 0 && presenter.activeDigitIndex >= 0) {
             presenter.matrix_result[presenter.activeCellIndex] = presenter.activeDigitIndex + 1;
+            presenter.player_moves[presenter.activeCellIndex] = true;
             presenter.activeCellIndex = -1;
             presenter.activeDigitIndex = -1;
             // log(step);
@@ -349,8 +355,14 @@ function game(window, document) {
             if (presenter.activeCellIndex === i) {
                 tile.classList.add('active');
             }
+            if (presenter.comp_moves[i]) {
+                tile.classList.add('comp');
+            }
+            if (presenter.player_moves[i]) {
+                tile.classList.add('player');
+            }
             if (i === presenter.getBestPos()) {
-                tile.classList.add("last");
+                tile.classList.add('last');
             }
         }
 
@@ -370,7 +382,7 @@ function game(window, document) {
                 tile.classList.add('active');
             }
             if (i === presenter.getBestDigit()) {
-                tile.classList.add("last");
+                tile.classList.add('last');
             }
         }
     }

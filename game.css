@@ -150,7 +150,15 @@ img {
     cursor: not-allowed;
     /*pointer-events: none;*/
     /*color: #c0c0c0;*/
-    background-color: royalblue;
+    /*background-color: royalblue;*/
+}
+
+.cell.player {
+    border: solid 2px royalblue;
+}
+
+.cell.comp {
+    border: solid 2px red;
 }
 
 .digit.disabled {
@@ -173,17 +181,12 @@ img {
     cursor: default;
 }
 
-.last {
-    border: solid 2px red;
+.cell.comp.last {
+    box-shadow:inset 0 0 0 5px red;
 }
 
-.win {
-    background-color: red;
-}
-
-.win .hole {
-    border: solid 2px red;
-    background-color: red;
+.cell.player.last {
+    box-shadow:inset 0 0 0 5px blue;
 }
 
 .active {
