@@ -1,5 +1,5 @@
 "use strict"; // jshint ;_;
-function game(window, document) {
+function game(window, document, startRed) {
 
     //Constants
     const animationTime = 100;
@@ -424,6 +424,9 @@ function game(window, document) {
         e.preventDefault();
         overlay.classList.remove("show");
     }, false);
+    if (startRed) {
+        presenter.makeMove();
+    }
     drawWithAnimation();
 }
 
@@ -458,13 +461,14 @@ function install(window, document) {
     try {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const isSolved = urlParams.get('solved');
+        const startRed = !!JSON.parse(urlParams.get('startRed'));
+        console.log(startRed);
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js', {scope: './'});
             install(window, document);
         }
 
-        game(window, document);
+        game(window, document, startRed);
     } catch (e) {
         console.log(e);
     }
