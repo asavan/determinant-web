@@ -30,7 +30,7 @@ footer {
     flex: 0 0 auto;
 
     /*padding: 5px; !*это свойство можно удалить, добавлено для наглядности*!*/
-    /*background: #e6ffe6;!*это свойство можно удалить, добавлено для наглядности*!*/
+    background: red;/*это свойство можно удалить, добавлено для наглядности*/
 }
 
 @keyframes bump { /*for Google*/
@@ -91,6 +91,7 @@ footer {
     display: flex;
     flex-wrap: wrap;
     min-width: 350px;
+    /*background-color: green;*/
 }
 
 hr {
@@ -103,11 +104,7 @@ hr {
     padding: 0;
 }
 
-@media (max-width: 600px) {
-
-}
-
-@media (max-width: 700px) {
+@media (max-width: 700px) and (min-width: 450px) {
     .field {
         flex-wrap: wrap;
         /*width: 100%;*/
@@ -118,7 +115,7 @@ hr {
     }
 
     .digits {
-        background: #e6f2ff;
+        /*background: #e6f2ff;*/
     }
 }
 
@@ -127,8 +124,8 @@ hr {
     background-color: lightgrey;
     text-align: center;
     font: bold 24px/100px Tahoma, sans;
-    height: calc((100vw - 42px) / 3);
-    max-height: 100px;
+    height: 100px;
+    /*max-height: 100px;*/
     width: 100%;
     /*color: #ffffff;*/
     cursor: pointer;
@@ -152,6 +149,7 @@ img {
     width: 100px;
     /*width: calc((100vw - 42px) / 3);*/
     /*height: calc((100vw - 42px) / 3);*/
+    /*padding-top: 100%;*/
     max-height: 100px;
     border: solid 2px gray;
     margin: 5px;
@@ -208,6 +206,45 @@ img {
     /*display: none;*/
 }
 
+@media (max-width: 450px) {
+    .field {
+        flex-wrap: wrap;
+        /*width: 100%;*/
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    .digits {
+        /*background: #e6f2ff;*/
+        width: 50vh;
+        min-width: 45vh;
+    }
+
+    .box {
+        width: 46vh;
+        min-width: 45vh;
+    }
+
+    .cell {
+        width: 13vh;
+        margin: 0.5vh;
+        max-width: 100px;
+        height: 13vh;
+    }
+
+    .digit {
+        width: 13vh;
+        max-width: 100px;
+        height: 13vh;
+        margin: 0.5vh;
+    }
+
+    .install {
+        height: 11vh;
+    }
+}
 
 .hole {
     color: transparent;
