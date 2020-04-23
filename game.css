@@ -114,8 +114,9 @@ hr {
         width: 100%;
     }
 
-    .digits {
-        /*background: #e6f2ff;*/
+    .install {
+        /*height: 11vh;*/
+        display: none;
     }
 }
 
@@ -242,7 +243,8 @@ img {
     }
 
     .install {
-        height: 11vh;
+        /*height: 11vh;*/
+        display: none;
     }
 }
 

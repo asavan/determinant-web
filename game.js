@@ -6,7 +6,6 @@ function game(window, document, startRed) {
     const size = 3;
     const size_sqr = size * size;
 
-
     const solver = function () {
         const INF = 500;
         const MINUS_INF = -500;
@@ -452,7 +451,7 @@ function install(window, document) {
         deferredPrompt = e;
         // Update UI notify the user they can add to home screen
         // btnAdd.removeAttribute('disabled');
-        // btnAdd.classList.remove("hidden");
+        btnAdd.classList.remove("hidden");
     });
 }
 
@@ -461,8 +460,7 @@ function install(window, document) {
     try {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
-        const startRed = !!JSON.parse(urlParams.get('startRed'));
-        console.log(startRed);
+        const startRed = urlParams.get('startRed') ? !!JSON.parse(urlParams.get('startRed')) : false;
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js', {scope: './'});
             install(window, document);
