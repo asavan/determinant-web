@@ -452,7 +452,7 @@ function install(window, document) {
         deferredPrompt = e;
         // Update UI notify the user they can add to home screen
         // btnAdd.removeAttribute('disabled');
-        btnAdd.classList.remove("hidden");
+        // btnAdd.classList.remove("hidden");
     });
 }
 

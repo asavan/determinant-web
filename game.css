@@ -33,7 +33,7 @@ footer {
     background: red;/*это свойство можно удалить, добавлено для наглядности*/
 }
 
-@keyframes bump { /*for Google*/
+@keyframes bump {
     0% {
         transform: scale(1.5, 1.5);
         width: 100px;
@@ -218,26 +218,26 @@ img {
 
     .digits {
         /*background: #e6f2ff;*/
-        width: 50vh;
+        width: 55vh;
         min-width: 45vh;
     }
 
     .box {
-        width: 46vh;
+        width: 55vh;
         min-width: 45vh;
     }
 
     .cell {
-        width: 13vh;
+        width: 15vh;
         margin: 0.5vh;
         max-width: 100px;
-        height: 13vh;
+        height: 15vh;
     }
 
     .digit {
-        width: 13vh;
+        width: 15vh;
         max-width: 100px;
-        height: 13vh;
+        height: 15vh;
         margin: 0.5vh;
     }
 
