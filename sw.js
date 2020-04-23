@@ -13,8 +13,8 @@ function precache() {
     return caches.open(CACHE).then(function (cache) {
         return cache.addAll([
             './',
-            './game.js',
-            './game.css',
+            './game-dist.js',
+            './game-dist.css',
             './images/matrix_square.svg'
         ]);
     });
