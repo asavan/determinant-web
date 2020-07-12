@@ -279,6 +279,16 @@ function game(window, document, startRed) {
         return getIndex(evt, parent);
     };
 
+    function onGameEnd() {
+        const message = ((presenter.getResult() > 0) && solver.isFirstStep(presenter.getStep())) ? "You win" : "You lose";
+        const h2 = overlay.querySelectorAll('h2')[0];
+        h2.textContent = message;
+        const content = overlay.querySelectorAll('.content')[0];
+        content.textContent = "Result " + presenter.getResult();
+        overlay.classList.add('show');
+        btnInstall.classList.remove('hidden2');
+    }
+
     function doStep() {
         if (presenter.getActivePosition() >= 0 && presenter.getActiveDigitIndex() >= 0) {
             presenter.setUserMove(presenter.getActivePosition(), presenter.getActiveDigitIndex());
@@ -288,12 +298,7 @@ function game(window, document, startRed) {
                 presenter.makeMove();
                 drawWithAnimation();
                 if (presenter.getStep() > 5) {
-                    const message = ((presenter.getResult() > 0) && solver.isFirstStep(presenter.getStep())) ? "You win" : "You lose";
-                    const h2 = overlay.querySelectorAll('h2')[0];
-                    h2.textContent = message;
-                    const content = overlay.querySelectorAll('.content')[0];
-                    content.textContent = "Result " + presenter.getResult();
-                    overlay.classList.add('show');
+                    onGameEnd();
                 }
             }, 5 * animationTime);
         }
@@ -330,6 +335,7 @@ function game(window, document, startRed) {
     const digits = document.getElementsByClassName("digits")[0];
     const overlay = document.getElementsByClassName("overlay")[0];
     const close = document.getElementsByClassName("close")[0];
+    const btnInstall = document.getElementsByClassName("install")[0];
 
     for (let i = 0; i < size_sqr; i++) {
         const cell = document.createElement('div');
