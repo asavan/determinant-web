@@ -13,9 +13,12 @@ function precache() {
     return caches.open(CACHE).then(function (cache) {
         return cache.addAll([
             './',
+            './index.html',
             './game.js',
             './game.css',
-            './images/matrix_square.svg'
+            './images/matrix_square.svg',
+            './worker.js',
+            './determinant.wasm'
         ]);
     });
 }

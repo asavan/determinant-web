@@ -1,5 +1,5 @@
 "use strict"; // jshint ;_;
-function game(window, document, startRed) {
+function game(window, document, startRed, myWorker) {
 
     //Constants
     const animationTime = 100;
@@ -65,8 +65,7 @@ function game(window, document, startRed) {
                         if (best2 < res) {
                             best2 = res;
                         }
-                    }
-                    else {
+                    } else {
                         if (best1 > res) {
                             best1 = res;
                         }
@@ -142,8 +141,7 @@ function game(window, document, startRed) {
                             best2 = res;
                             save_result = true;
                         }
-                    }
-                    else {
+                    } else {
                         if (best1 > res) {
                             best1 = res;
                             save_result = true;
@@ -164,10 +162,36 @@ function game(window, document, startRed) {
             return {result: result, bestK: bestK, bestPos: bestPos};
         };
 
+        const matrix_to_int = function (matrix) {
+            let val = 0;
+            for (let i = 0; i < size_sqr; ++i) {
+                val *= 10;
+                val += matrix[i];
+            }
+            return val;
+        }
+
+        const int_to_result = function (val) {
+            const sign = val < 0 ? -1 : 1;
+            val *= sign;
+            const bestPos = val % 10;
+            val -= bestPos;
+            val /= 10;
+            const bestK = val % 10;
+            val -= bestK;
+            val /= 10;
+            const result = sign * val;
+            return {result: result, bestK: bestK, bestPos: bestPos};
+        }
+
         return {
             solve_matrix_flat: solve_matrix_flat,
             fill_digits: fill_digits,
-            isFirstStep: is_first
+            isFirstStep: is_first,
+            matrix_to_int: matrix_to_int,
+            int_to_result: int_to_result,
+            determinant: determinant3,
+            randomInteger: randomInteger
         }
     }();
 
@@ -184,22 +208,67 @@ function game(window, document, startRed) {
         const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         const player_moves = [false, false, false, false, false, false, false, false, false];
         const comp_moves = [false, false, false, false, false, false, false, false, false];
-        const makeMove = function () {
-            console.time("stepTime");
-            const res = solver_.solve_matrix_flat(matrix_result);
+
+        let lastMoveTime = null;
+
+        function onAiMove(res) {
             console.timeEnd("stepTime");
             console.log(res.result);
             currResult = res.result;
             bestPos = res.bestPos;
             bestDigit = res.bestK;
             if (bestPos >= 0) {
-                matrix_result[bestPos] = bestDigit + 1;
-                comp_moves[bestPos] = true;
-                lastCompMove = bestPos;
+                if (matrix_result[bestPos] === 0) {
+                    matrix_result[bestPos] = bestDigit + 1;
+                    comp_moves[bestPos] = true;
+                    lastCompMove = bestPos;
+                }
             }
 
             activeCellIndex = -1;
             activeDigitIndex = -1;
+        }
+
+        function onAiMoveWithAnimation(res) {
+            onAiMove(res);
+            const currTime = new Date();
+            const minMoveTime = 10 * animationTime;
+            if (lastMoveTime && currTime - lastMoveTime < minMoveTime) {
+                console.log(currTime - lastMoveTime);
+                setTimeout(afterMove, minMoveTime - (currTime - lastMoveTime));
+            } else {
+                console.log("Instant");
+                afterMove();
+            }
+        }
+
+        function onWorkerMove(val) {
+            // console.log(val);
+            const res = solver_.int_to_result(val);
+            // console.log(res);
+            onAiMoveWithAnimation(res);
+        }
+
+        const makeMove = function () {
+            console.time("stepTime");
+            const digits = [];
+            let step = solver_.fill_digits(matrix_result, digits);
+            lastMoveTime = new Date();
+            if (step === size_sqr) {
+                let best1 = solver_.determinant(matrix_result);
+                onAiMoveWithAnimation({result: best1, bestK: -1, bestPos: -1});
+                return lastMoveTime;
+            }
+
+            if (step === 0) {
+                let bestPos = solver_.randomInteger(0, size_sqr);
+                onAiMoveWithAnimation( {result: 40, bestK: 4, bestPos: bestPos});
+                return lastMoveTime;
+            }
+
+            const matrixVal = solver_.matrix_to_int(matrix_result);
+            myWorker.postMessage(matrixVal);
+            return lastMoveTime;
         };
         const getResult = () => currResult;
         const getLastCompMove = () => lastCompMove;
@@ -258,8 +327,9 @@ function game(window, document, startRed) {
             setActiveDigitIndex: setActiveDigitIndex,
             getActivePosition: getActivePosition,
             setActivePosition: setActivePosition,
-            getStep: getStep
-
+            getStep: getStep,
+            onAiMove: onAiMove,
+            onWorkerMove: onWorkerMove
         }
     }(solver);
 
@@ -289,18 +359,23 @@ function game(window, document, startRed) {
         btnInstall.classList.remove('hidden2');
     }
 
+    function afterMove() {
+        drawWithAnimation();
+        if (presenter.getStep() > 5) {
+            onGameEnd();
+        }
+    }
+
     function doStep() {
         if (presenter.getActivePosition() >= 0 && presenter.getActiveDigitIndex() >= 0) {
             presenter.setUserMove(presenter.getActivePosition(), presenter.getActiveDigitIndex());
             drawWithAnimation();
-            // log(step);
-            setTimeout(function () {
-                presenter.makeMove();
-                drawWithAnimation();
-                if (presenter.getStep() > 5) {
-                    onGameEnd();
-                }
-            }, 5 * animationTime);
+            presenter.makeMove();
+            // // log(step);
+            // setTimeout(function () {
+            //     presenter.makeMove();
+            //     afterMove();
+            // }, 5 * animationTime);
         }
         drawWithAnimation();
     }
@@ -315,6 +390,10 @@ function game(window, document, startRed) {
         doStep();
     };
 
+    const handleWorkerMessage = function (e) {
+        presenter.onWorkerMove(e.data);
+    };
+
     function log(msg) {
         let p = document.getElementById('log');
         if (!p) {
@@ -322,12 +401,11 @@ function game(window, document, startRed) {
             p.setAttribute("id", "log");
         }
         p.innerHTML = msg + "\n" + p.innerHTML;
-        console.log(msg)
+        console.log(msg);
     }
 
 
     function drawWithAnimation() {
-        // setTimeout(draw, 1000);
         draw();
     }
 
@@ -429,10 +507,14 @@ function game(window, document, startRed) {
         e.preventDefault();
         overlay.classList.remove("show");
     }, false);
+    myWorker.addEventListener('message', handleWorkerMessage, false);
+    drawWithAnimation();
     if (startRed) {
         presenter.makeMove();
     }
-    drawWithAnimation();
+    return {
+        guess: () => presenter.makeMove()
+    }
 }
 
 function install(window, document) {
@@ -471,8 +553,11 @@ function install(window, document) {
             navigator.serviceWorker.register('./sw.js', {scope: './'});
             install(window, document);
         }
-
-        game(window, document, startRed);
+        let myWorker = null;
+        if (window.Worker) {
+            myWorker = new Worker("worker.js");
+        }
+        window.gameObj = game(window, document, startRed, myWorker);
     } catch (e) {
         console.log(e);
     }
