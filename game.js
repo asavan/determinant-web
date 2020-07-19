@@ -18,12 +18,12 @@ function game(window, document, startRed, myWorker) {
         };
 
         const determinant3 = a => {
-            return a[0] * a[4] * a[8] +
-                a[6] * a[1] * a[5] +
-                a[3] * a[7] * a[2]
-                - a[2] * a[4] * a[6]
-                - a[1] * a[3] * a[8]
-                - a[0] * a[5] * a[7];
+             return a[0] * a[4] * a[8] +
+                    a[6] * a[1] * a[5] +
+                    a[3] * a[7] * a[2]
+                  - a[2] * a[4] * a[6]
+                  - a[1] * a[3] * a[8]
+                  - a[0] * a[5] * a[7];
         };
 
         const is_first = step => step % 2 === 0;
@@ -212,8 +212,8 @@ function game(window, document, startRed, myWorker) {
         let lastMoveTime = null;
 
         function onAiMove(res) {
-            console.timeEnd("stepTime");
-            console.log(res.result);
+            // console.timeEnd("stepTime");
+            // console.log(res.result);
             currResult = res.result;
             bestPos = res.bestPos;
             bestDigit = res.bestK;
@@ -232,12 +232,12 @@ function game(window, document, startRed, myWorker) {
         function onAiMoveWithAnimation(res) {
             onAiMove(res);
             const currTime = new Date();
-            const minMoveTime = 10 * animationTime;
+            const minMoveTime = 7 * animationTime;
             if (lastMoveTime && currTime - lastMoveTime < minMoveTime) {
-                console.log(currTime - lastMoveTime);
+                // console.log(currTime - lastMoveTime);
                 setTimeout(afterMove, minMoveTime - (currTime - lastMoveTime));
             } else {
-                console.log("Instant");
+                console.log("Why Instant?");
                 afterMove();
             }
         }
@@ -250,7 +250,7 @@ function game(window, document, startRed, myWorker) {
         }
 
         const makeMove = function () {
-            console.time("stepTime");
+            // console.time("stepTime");
             const digits = [];
             let step = solver_.fill_digits(matrix_result, digits);
             lastMoveTime = new Date();
@@ -262,7 +262,7 @@ function game(window, document, startRed, myWorker) {
 
             if (step === 0) {
                 let bestPos = solver_.randomInteger(0, size_sqr);
-                onAiMoveWithAnimation( {result: 40, bestK: 4, bestPos: bestPos});
+                onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos});
                 return lastMoveTime;
             }
 
@@ -277,6 +277,10 @@ function game(window, document, startRed, myWorker) {
         const isUserDigit = (d) => matrix_result[lastUserMove] - 1;
 
         const setUserMove = function (position, digit) {
+            if (matrix_result[position] !== 0) {
+                console.log("State error");
+                return;
+            }
             matrix_result[position] = digit + 1;
             player_moves[position] = true;
             lastUserMove = position;
@@ -288,7 +292,7 @@ function game(window, document, startRed, myWorker) {
             step = -1;
             if (ind >= 0) {
                 const digits_local = [];
-                step = solver.fill_digits(presenter.matrix_result, digits_local);
+                step = solver_.fill_digits(presenter.matrix_result, digits_local);
                 if (digits_local[ind]) {
                     activeDigitIndex = -1;
                     return;
@@ -369,7 +373,7 @@ function game(window, document, startRed, myWorker) {
     function doStep() {
         if (presenter.getActivePosition() >= 0 && presenter.getActiveDigitIndex() >= 0) {
             presenter.setUserMove(presenter.getActivePosition(), presenter.getActiveDigitIndex());
-            drawWithAnimation();
+            // drawWithAnimation();
             presenter.makeMove();
             // // log(step);
             // setTimeout(function () {
