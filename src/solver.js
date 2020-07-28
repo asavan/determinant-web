@@ -1,16 +1,9 @@
-const size = 3;
-const size_sqr = size * size;
-
-const solver = function () {
+const solverFunc = function (size) {
+    const size_sqr = size * size;
     const INF = 500;
     const MINUS_INF = -500;
     let bestK = -1;
     let bestPos = -1;
-
-    const randomInteger = (min, max) => {
-        let rand = min + Math.random() * (max - min);
-        return Math.floor(rand);
-    };
 
     const determinant3 = a => {
         return a[0] * a[4] * a[8] +
@@ -185,9 +178,8 @@ const solver = function () {
         isFirstStep: is_first,
         matrix_to_int: matrix_to_int,
         int_to_result: int_to_result,
-        determinant: determinant3,
-        randomInteger: randomInteger
+        determinant: determinant3
     }
-}();
+};
 
-export {solver}
+export {solverFunc}
