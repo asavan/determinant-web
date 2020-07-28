@@ -1,5 +1,7 @@
 "use strict";
-const presenterFunc = function (solver_) {
+
+const presenterFunc = function (solver_, settings) {
+    let currentUserIsRed = settings.startRed;
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
     let lastCompMove = -1;
@@ -8,55 +10,73 @@ const presenterFunc = function (solver_) {
     let bestDigit = -1;
     let bestPos = -1;
     let currResult = 0;
-    let step = -1;
-    const matrix_result = [0, 0, 0, 0, 0, 0, 0, 0, 0];
-    const player_moves = [false, false, false, false, false, false, false, false, false];
-    const comp_moves = [false, false, false, false, false, false, false, false, false];
+    let step = 0;
+    const matrix_result = Array(solver_.getSizeSqr()).fill(0);
+    const player_moves = Array(solver_.getSizeSqr()).fill(false);
+    const comp_moves = Array(solver_.getSizeSqr()).fill(false);
+    const digits = Array(solver_.getSizeSqr()).fill(false);
 
     function onAiMove(res) {
-        // console.timeEnd("stepTime");
-        // console.log(res.result);
         currResult = res.result;
         bestPos = res.bestPos;
         bestDigit = res.bestK;
-        if (bestPos >= 0) {
-            if (matrix_result[bestPos] === 0) {
-                matrix_result[bestPos] = bestDigit + 1;
-                comp_moves[bestPos] = true;
-                lastCompMove = bestPos;
-            }
-        }
-
-        activeCellIndex = -1;
-        activeDigitIndex = -1;
+        return autoMove(bestPos, bestDigit);
     }
-
-
 
     const getResult = () => currResult;
     const getLastCompMove = () => lastCompMove;
 
     const getLastUserMove = () => lastUserMove;
-    const isUserDigit = (d) => matrix_result[lastUserMove] - 1;
 
-    const setUserMove = function (position, digit) {
+    const isLastMove = (m) => lastCompMove === m || lastUserMove === m;
+
+    const setMove = function(position, digit, isRed) {
+        if (position < 0) {
+            return false;
+        }
+
+        if (digit < 0) {
+            return false;
+        }
+
         if (matrix_result[position] !== 0) {
             console.log("State error");
-            return;
+            return false;
         }
         matrix_result[position] = digit + 1;
-        player_moves[position] = true;
-        lastUserMove = position;
+        if (!isRed) {
+            player_moves[position] = true;
+            lastUserMove = position;
+        } else {
+            comp_moves[position] = true;
+            lastCompMove = position;
+        }
+
+        step = solver_.fill_digits(matrix_result, digits);
+
         activeCellIndex = -1;
         activeDigitIndex = -1;
-    };
+        return true;
+    }
+
+    const autoMove = function (position, digit) {
+        const res = setMove(position, digit, currentUserIsRed);
+        if (res) {
+            currentUserIsRed = !currentUserIsRed;
+        }
+        return res;
+    }
+
+    const tryMove = function () {
+        return autoMove(getActivePosition(), getActiveDigitIndex());
+    }
 
     const setActiveDigitIndex = function (ind) {
-        step = -1;
+        if (currentUserIsRed && settings.currentMode !== "hotseat") {
+            return;
+        }
         if (ind >= 0) {
-            const digits_local = [];
-            step = solver_.fill_digits(matrix_result, digits_local);
-            if (digits_local[ind]) {
+            if (digits[ind]) {
                 activeDigitIndex = -1;
                 return;
             }
@@ -67,6 +87,9 @@ const presenterFunc = function (solver_) {
     const getActiveDigitIndex = () => activeDigitIndex;
 
     const setActivePosition = function (pos) {
+        if (currentUserIsRed && settings.currentMode !== "hotseat") {
+            return;
+        }
         if (pos >= 0) {
             if (matrix_result[pos] > 0) {
                 activeCellIndex = -1;
@@ -78,24 +101,16 @@ const presenterFunc = function (solver_) {
 
     const getActivePosition = () => activeCellIndex;
 
+    const getDigits = () => digits;
+
     const getStep = () => step;
 
-    const isFirstStep = () => {
-        return solver_.isFirstStep(step);
-    }
-
-    const getDigits = function() {
-        const digits_local = [];
-        solver_.fill_digits(matrix_result, digits_local);
-        return digits_local;
-    }
-
-    const isWin = () => {
-        return getResult() > 0 === isFirstStep();
+    const isWin = (startRed) => {
+        return getResult() > 0 !== startRed;
     }
 
     const lessThanTwoMoves = () => {
-        return getStep() + 2 >= matrix_result.length - 1;
+        return step + 2 > matrix_result.length;
     }
 
     return {
@@ -104,17 +119,18 @@ const presenterFunc = function (solver_) {
         comp_moves: comp_moves,
         getLastCompMove: getLastCompMove,
         getLastUserMove: getLastUserMove,
+        isLastMove: isLastMove,
         getResult: getResult,
-        setUserMove: setUserMove,
         getActiveDigitIndex: getActiveDigitIndex,
         setActiveDigitIndex: setActiveDigitIndex,
         getActivePosition: getActivePosition,
         setActivePosition: setActivePosition,
-        getStep: getStep,
         onAiMove: onAiMove,
         getDigits: getDigits,
+        getStep: getStep,
         isWin: isWin,
-        lessThanTwoMoves: lessThanTwoMoves
+        lessThanTwoMoves: lessThanTwoMoves,
+        tryMove: tryMove
     }
 };
 

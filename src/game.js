@@ -19,10 +19,69 @@ const handleClick = function (evt, parent) {
     return getIndex(evt, parent);
 };
 
-export default function game(window, document, startRed, myWorker) {
+function draw(presenter, box, digits) {
+    for (let i = 0; i < presenter.matrix_result.length; i++) {
+        const tile = box.childNodes[i];
+        const val = presenter.matrix_result[i];
+        tile.textContent = val.toString();
+
+        if (val) {
+            tile.className = 'cell disabled';
+        } else {
+            tile.className = 'cell hole';
+        }
+        if (presenter.getActivePosition() === i) {
+            tile.classList.add('active');
+        }
+        if (presenter.comp_moves[i]) {
+            tile.classList.add('comp');
+        }
+        if (presenter.player_moves[i]) {
+            tile.classList.add('player');
+        }
+        if (presenter.isLastMove(i)) {
+            tile.classList.add('last');
+        }
+    }
+
+    const digits_local = presenter.getDigits();
+    for (let i = 0; i < presenter.matrix_result.length; i++) {
+        const tile = digits.childNodes[i];
+        const used = digits_local[i];
+        const val = i + 1;
+        tile.textContent = val.toString();
+        tile.className = 'digit';
+
+        if (used) {
+            tile.classList.add('disabled');
+        }
+        if (presenter.getActiveDigitIndex() === i) {
+            tile.classList.add('active');
+        }
+        // if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
+        //     tile.classList.add('comp');
+        // }
+        // if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
+        //     tile.classList.add('player');
+        // }
+    }
+}
+
+export default function game(window, document, settings) {
+    const box = document.getElementsByClassName("box")[0];
+    const digits = document.getElementsByClassName("digits")[0];
+    const overlay = document.getElementsByClassName("overlay")[0];
+    const close = document.getElementsByClassName("close")[0];
+    const btnInstall = document.getElementsByClassName("install")[0];
+
+    const startRed = settings.startRed;
+
+    const solver = solverFunc(3);
+    const presenter = presenterFunc(solver, settings);
+    const aiBot = ai(solver, presenter, afterMove);
 
     function onGameEnd() {
-        const message = presenter.isWin() ? "You win" : "You lose";
+        const message = presenter.isWin(startRed) ? "You win" : "You lose";
         const h2 = overlay.querySelectorAll('h2')[0];
         h2.textContent = message;
         const content = overlay.querySelectorAll('.content')[0];
@@ -38,17 +97,12 @@ export default function game(window, document, startRed, myWorker) {
         }
     }
 
-    function onWorkerMove(val) {
-        const res = solver.int_to_result(val);
-        aiBot.onAiMoveWithAnimation(res);
-    }
-
     function doStep() {
-        if (presenter.getActivePosition() >= 0 && presenter.getActiveDigitIndex() >= 0) {
-            presenter.setUserMove(presenter.getActivePosition(), presenter.getActiveDigitIndex());
+        const res = presenter.tryMove();
+        afterMove();
+        if (res) {
             aiBot.makeMove();
         }
-        drawWithAnimation();
     }
 
     const handleBox = function (evt) {
@@ -61,23 +115,9 @@ export default function game(window, document, startRed, myWorker) {
         doStep();
     };
 
-    const handleWorkerMessage = function (e) {
-        onWorkerMove(e.data);
-    };
-
     function drawWithAnimation() {
-        draw();
+        draw(presenter, box, digits);
     }
-
-    const box = document.getElementsByClassName("box")[0];
-    const digits = document.getElementsByClassName("digits")[0];
-    const overlay = document.getElementsByClassName("overlay")[0];
-    const close = document.getElementsByClassName("close")[0];
-    const btnInstall = document.getElementsByClassName("install")[0];
-
-    const solver = solverFunc(3);
-    const presenter = presenterFunc(solver);
-    const aiBot = ai(solver, presenter, myWorker, afterMove);
 
     function initField(fieldSize, className, elem) {
         for (let i = 0; i < fieldSize; i++) {
@@ -90,61 +130,13 @@ export default function game(window, document, startRed, myWorker) {
     initField(presenter.matrix_result.length, 'cell', box);
     initField(presenter.matrix_result.length, 'digit', digits);
 
-    function draw() {
-        for (let i = 0; i < presenter.matrix_result.length; i++) {
-            const tile = box.childNodes[i];
-            const val = presenter.matrix_result[i];
-            tile.textContent = val.toString();
-
-            if (val) {
-                tile.className = 'cell disabled';
-            } else {
-                tile.className = 'cell hole';
-            }
-            if (presenter.getActivePosition() === i) {
-                tile.classList.add('active');
-            }
-            if (presenter.comp_moves[i]) {
-                tile.classList.add('comp');
-            }
-            if (presenter.player_moves[i]) {
-                tile.classList.add('player');
-            }
-            if (i === presenter.getLastUserMove() || i === presenter.getLastCompMove()) {
-                tile.classList.add('last');
-            }
-        }
-
-        const digits_local = presenter.getDigits();
-        for (let i = 0; i < presenter.matrix_result.length; i++) {
-            const tile = digits.childNodes[i];
-            const used = digits_local[i];
-            const val = i + 1;
-            tile.textContent = val.toString();
-            tile.className = 'digit';
-
-            if (used) {
-                tile.classList.add('disabled');
-            }
-            if (presenter.getActiveDigitIndex() === i) {
-                tile.classList.add('active');
-            }
-            if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
-                tile.classList.add('comp');
-            }
-            if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
-                tile.classList.add('player');
-            }
-        }
-    }
-
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
     close.addEventListener("click", function (e) {
         e.preventDefault();
         overlay.classList.remove("show");
     }, false);
-    myWorker.addEventListener('message', handleWorkerMessage, false);
+
     drawWithAnimation();
     if (startRed) {
         aiBot.makeMove();

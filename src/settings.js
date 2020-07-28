@@ -1,8 +1,8 @@
 export default {
     modes: ["net", "fake", "ai", "hotseat"],
-    currentMode: "net",
+    currentMode: "ai",
     debug: true,
     wsPort : 8088,
-    gameMode: 'ai',
-    negotiatedId: 3
+    negotiatedId: 3,
+    startRed: false
 }
