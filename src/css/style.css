@@ -233,7 +233,7 @@ img {
     left: 0;
     right: 0;
     background: rgba(0, 0, 0, 0.7);
-    transition: opacity 500ms;
+    transition: opacity 700ms;
     visibility: hidden;
     opacity: 0;
 }
@@ -263,7 +263,7 @@ img {
     position: absolute;
     top: 20px;
     right: 30px;
-    transition: all 200ms;
+    transition: all 400ms;
     font-size: 30px;
     font-weight: bold;
     text-decoration: none;
@@ -271,7 +271,7 @@ img {
 }
 
 .popup .close:hover {
-    color: royalblue;
+    color: var(--player-color);
 }
 
 .popup .content {

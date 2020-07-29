@@ -1,6 +1,6 @@
 "use strict";
 
-const presenterFunc = function (solver, settings) {
+export default function presenterFunc(solver, settings) {
     let currentUserIsRed = settings.startRed;
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
@@ -123,7 +123,7 @@ const presenterFunc = function (solver, settings) {
     const isCurrentRed = () => currentUserIsRed;
 
     const lessThanTwoMoves = () => {
-        return step + 2 > matrix_result.length && getActiveDigitIndex() < 0 && getActivePosition() < 0;
+        return step + 2 > matrix_result.length;
     }
 
     return {
@@ -147,5 +147,3 @@ const presenterFunc = function (solver, settings) {
         isCurrentRed: isCurrentRed
     }
 };
-
-export {presenterFunc}

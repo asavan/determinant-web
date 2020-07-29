@@ -1,4 +1,4 @@
-const solverFunc = function (size) {
+export default function solverFunc(size) {
     const size_sqr = size * size;
 
     const determinant3 = a => {
@@ -105,5 +105,3 @@ const solverFunc = function (size) {
         getSizeSqr: getSizeSqr
     }
 };
-
-export {solverFunc}

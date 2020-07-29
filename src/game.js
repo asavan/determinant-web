@@ -1,6 +1,6 @@
 "use strict"; // jshint ;_;
-import {solverFunc} from "./solver.js";
-import {presenterFunc} from "./presenter.js";
+import solverFunc from "./solver.js";
+import presenterFunc from "./presenter.js";
 
 function stub() {
 }
@@ -102,14 +102,15 @@ export default function game(window, document, settings) {
         'enemyMove': stub,
         'meMove': stub,
         'aiMove': stub,
+        'aiHint': stub,
         'gameover': stub
     }
 
     function onGameEnd() {
         const message = presenter.isWin(startRed) ? "You win" : "You lose";
-        const h2 = overlay.querySelectorAll('h2')[0];
+        const h2 = overlay.querySelector('h2');
         h2.textContent = message;
-        const content = overlay.querySelectorAll('.content')[0];
+        const content = overlay.querySelector('.content');
         content.textContent = "Determinant =  " + presenter.getResult();
         overlay.classList.add('show');
         btnInstall.classList.remove('hidden2');
@@ -118,18 +119,31 @@ export default function game(window, document, settings) {
 
     function afterMove(res, isCurrentRed) {
         drawWithAnimation();
-        if (presenter.lessThanTwoMoves()) {
-            onGameEnd();
-        }
         if (res) {
+            if (presenter.lessThanTwoMoves()) {
+                onGameEnd();
+            }
             if (isCurrentRed) {
+                if (presenter.getLastUserMove() >= 0) {
+                    handlers["playerMove"]({
+                        bestPos: presenter.getLastUserMove(),
+                        bestK: presenter.matrix_result[presenter.getLastUserMove()] - 1,
+                        result: 0
+                    });
+                }
                 handlers["aiMove"](presenter.matrix_result);
             } else {
+                if (presenter.getLastCompMove() >= 0) {
+                    handlers["enemyMove"]({
+                        bestPos: presenter.getLastCompMove(),
+                        bestK: presenter.matrix_result[presenter.getLastCompMove()] - 1,
+                        result: 0
+                    });
+                }
                 handlers["meMove"](presenter.matrix_result);
             }
             // aiBot.makeMove();
         }
-
     }
 
     function doStep() {

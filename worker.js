@@ -6,13 +6,14 @@ const wasmReady = new Promise((resolve) => {
 });
 
 self.addEventListener('message', function (e) {
-    const result = e.data;
+    const result = e.data.input;
+    const label = e.data.label;
     if (isNaN(result)) {
         postMessage('Please send a number');
     } else {
         wasmReady.then((solve_matrix) => {
             const res = solve_matrix(result);
-            postMessage(res);
+            postMessage({result: res, label: label});
         });
     }
 }, false);

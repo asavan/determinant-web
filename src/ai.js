@@ -10,7 +10,8 @@ if (window.Worker) {
     myWorker = new Worker("worker.js");
 }
 
-function jsSolver(size_sqr, solver_) {
+function jsSolver(solver_) {
+    const size_sqr = solver_.getSizeSqr();
     const INF = 500;
     const MINUS_INF = -500;
 
@@ -19,11 +20,6 @@ function jsSolver(size_sqr, solver_) {
     let bestPos = -1;
     const is_first = step => step % 2 === 0;
 
-    const copy_matrix = (src, dst) => {
-        for (let i = 0; i < size_sqr; ++i) {
-            dst[i] = src[i];
-        }
-    };
 
     const who_wins = function (matrix, digits, step, best1, best2) {
 
@@ -78,7 +74,7 @@ function jsSolver(size_sqr, solver_) {
     const solve_matrix_flat = function (matrix_) {
 
         const matrix = [];
-        copy_matrix(matrix_, matrix);
+        solver_.copy_matrix(matrix_, matrix);
 
         const digits = [];
         let step = solver_.fill_digits(matrix, digits);
@@ -141,13 +137,12 @@ function ai(solver_, afterMove) {
     function onAiMoveWithAnimation(res) {
         const currTime = new Date();
         const minMoveTime = 700;
-        if (lastMoveTime && currTime - lastMoveTime < minMoveTime) {
-            // console.log(currTime - lastMoveTime);
-            setTimeout(() => afterMove(res), minMoveTime - (currTime - lastMoveTime));
-        } else {
-            console.log("Why Instant?");
-            afterMove(res);
+        let timeRest = 0;
+        if (lastMoveTime) {
+            const timeDiff = currTime - lastMoveTime;
+            timeRest = Math.max(minMoveTime - timeDiff, 0);
         }
+        setTimeout(() => afterMove(res), timeRest);
     }
 
     const makeMove = function (matrix_result) {
@@ -168,9 +163,9 @@ function ai(solver_, afterMove) {
 
         if (solver_.getSize() === 3) {
             const matrixVal = solver_.matrix_to_int(matrix_result);
-            myWorker.postMessage(matrixVal);
+            myWorker.postMessage({input: matrixVal, label: "solve"});
         } else if (solver_.getSize() === 2) {
-            const qSolver = jsSolver(4, solver_);
+            const qSolver = jsSolver(solver_);
             const res = qSolver.solve_matrix_flat(matrix_result);
             onAiMoveWithAnimation(res);
         }
@@ -184,7 +179,8 @@ function ai(solver_, afterMove) {
     }
 
     const handleWorkerMessage = function (e) {
-        onWorkerMove(e.data);
+        console.log(e.data.label);
+        onWorkerMove(e.data.result);
     };
 
     myWorker.addEventListener('message', handleWorkerMessage, false);
@@ -194,4 +190,5 @@ function ai(solver_, afterMove) {
     }
 
 }
+
 export {ai}
