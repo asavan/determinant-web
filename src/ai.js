@@ -135,43 +135,43 @@ function jsSolver(size_sqr, solver_) {
     }
 }
 
-function ai(solver_, presenter_, afterMove) {
+function ai(solver_, afterMove) {
     let lastMoveTime = null;
 
     function onAiMoveWithAnimation(res) {
-        presenter_.onAiMove(res);
         const currTime = new Date();
         const minMoveTime = 700;
         if (lastMoveTime && currTime - lastMoveTime < minMoveTime) {
             // console.log(currTime - lastMoveTime);
-            setTimeout(afterMove, minMoveTime - (currTime - lastMoveTime));
+            setTimeout(() => afterMove(res), minMoveTime - (currTime - lastMoveTime));
         } else {
             console.log("Why Instant?");
-            afterMove();
+            afterMove(res);
         }
     }
 
-    const makeMove = function () {
-        let step = presenter_.getStep();
+    const makeMove = function (matrix_result) {
+        const digits = [];
+        const step = solver_.fill_digits(matrix_result, digits);
         lastMoveTime = new Date();
-        if (step === presenter_.matrix_result.length) {
-            let best1 = solver_.determinant(presenter_.matrix_result);
+        if (step === matrix_result.length) {
+            let best1 = solver_.determinant(matrix_result);
             onAiMoveWithAnimation({result: best1, bestK: -1, bestPos: -1});
             return lastMoveTime;
         }
 
         if (step === 0 && solver_.getSize() === 3) {
-            let bestPos = randomInteger(0, presenter_.matrix_result.length);
+            let bestPos = randomInteger(0, matrix_result.length);
             onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos});
             return lastMoveTime;
         }
 
         if (solver_.getSize() === 3) {
-            const matrixVal = solver_.matrix_to_int(presenter_.matrix_result);
+            const matrixVal = solver_.matrix_to_int(matrix_result);
             myWorker.postMessage(matrixVal);
         } else if (solver_.getSize() === 2) {
             const qSolver = jsSolver(4, solver_);
-            const res = qSolver.solve_matrix_flat(presenter_.matrix_result);
+            const res = qSolver.solve_matrix_flat(matrix_result);
             onAiMoveWithAnimation(res);
         }
 

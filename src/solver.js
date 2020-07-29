@@ -25,6 +25,12 @@ const solverFunc = function (size) {
         return size_sqr;
     }
 
+    const copy_matrix = (src, dst) => {
+        for (let i = 0; i < src.length; ++i) {
+            dst[i] = src[i];
+        }
+    };
+
     function fill_digits(matrix, digits) {
         let step = 0;
         for (let i = 0; i < size_sqr; ++i) {
@@ -33,6 +39,31 @@ const solverFunc = function (size) {
                 ++step;
                 let index = value - 1;
                 digits[index] = true;
+            }
+        }
+        return step;
+    }
+
+    function fill_matrix(matrix) {
+        const digits_local = [];
+        let step = fill_digits(matrix, digits_local);
+        for (let i = 0, j = 0; i < matrix.length && j < digits_local.length; ++i, ++j) {
+            while (matrix[i] !== 0) {
+                ++i;
+                if (i >= matrix.length) {
+                    return step;
+                }
+            }
+            while (digits_local[j]) {
+                ++j;
+                if (j >= digits_local.length) {
+                    return step;
+                }
+            }
+            if (i < matrix.length) {
+                matrix[i] = j + 1;
+                digits_local[j] = true;
+                ++step;
             }
         }
         return step;
@@ -65,7 +96,9 @@ const solverFunc = function (size) {
 
     return {
         fill_digits: fill_digits,
+        fill_matrix: fill_matrix,
         matrix_to_int: matrix_to_int,
+        copy_matrix: copy_matrix,
         int_to_result: int_to_result,
         determinant: determinant,
         getSize: getSize,

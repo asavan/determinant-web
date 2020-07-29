@@ -2,6 +2,7 @@ import "./css/style.css";
 
 import settings from "./settings.js";
 import gameFunction from "./game.js";
+import {ai} from "./ai.js";
 
 function launch(f, window, document) {
     if( document.readyState !== 'loading' ) {
@@ -47,7 +48,15 @@ function starter(window, document) {
     const startRed = urlParams.get('startRed') ? !!JSON.parse(urlParams.get('startRed')) : settings.startRed;
     settings.startRed = startRed;
     settings.size = urlParams.get('size') ? parseInt(urlParams.get('size'), 10) : settings.size;
-    window.gameObj = gameFunction(window, document, settings);
+    settings.currentMode = urlParams.get('currentMode') || settings.currentMode;
+    const game = gameFunction(window, document, settings);
+    if (settings.currentMode === 'ai') {
+        const aiBot = ai(game.getSolver(), game.aiMove);
+        game.on('aiMove', (matrix)=> aiBot.makeMove(matrix));
+    } else if (settings.currentMode === 'hotseat') {
+        // TODO
+    }
+    window.gameObj = game;
 }
 
 launch(starter, window, document);

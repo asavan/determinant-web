@@ -1,7 +1,9 @@
 "use strict"; // jshint ;_;
 import {solverFunc} from "./solver.js";
 import {presenterFunc} from "./presenter.js";
-import {ai} from "./ai.js";
+
+function stub() {
+}
 
 const handleClick = function (evt, parent) {
     const getIndex = function (e, parent) {
@@ -32,6 +34,11 @@ function draw(presenter, box, digits) {
         }
         if (presenter.getActivePosition() === i) {
             tile.classList.add('active');
+            if (presenter.isCurrentRed()) {
+                tile.classList.add('comp');
+            } else {
+                tile.classList.add('player');
+            }
         }
         if (presenter.comp_moves[i]) {
             tile.classList.add('comp');
@@ -57,6 +64,11 @@ function draw(presenter, box, digits) {
         }
         if (presenter.getActiveDigitIndex() === i) {
             tile.classList.add('active');
+            if (presenter.isCurrentRed()) {
+                tile.classList.add('comp');
+            } else {
+                tile.classList.add('player');
+            }
         }
         if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
             tile.classList.add('comp');
@@ -83,7 +95,15 @@ export default function game(window, document, settings) {
 
     const solver = solverFunc(settings.size);
     const presenter = presenterFunc(solver, settings);
-    const aiBot = ai(solver, presenter, afterMove);
+
+
+    const handlers = {
+        'playerMove': stub,
+        'enemyMove': stub,
+        'meMove': stub,
+        'aiMove': stub,
+        'gameover': stub
+    }
 
     function onGameEnd() {
         const message = presenter.isWin(startRed) ? "You win" : "You lose";
@@ -93,21 +113,28 @@ export default function game(window, document, settings) {
         content.textContent = "Determinant =  " + presenter.getResult();
         overlay.classList.add('show');
         btnInstall.classList.remove('hidden2');
+        handlers['gameover'](presenter.isWin(startRed));
     }
 
-    function afterMove() {
+    function afterMove(res, isCurrentRed) {
         drawWithAnimation();
         if (presenter.lessThanTwoMoves()) {
             onGameEnd();
         }
+        if (res) {
+            if (isCurrentRed) {
+                handlers["aiMove"](presenter.matrix_result);
+            } else {
+                handlers["meMove"](presenter.matrix_result);
+            }
+            // aiBot.makeMove();
+        }
+
     }
 
     function doStep() {
         const res = presenter.tryMove();
-        afterMove();
-        if (res) {
-            aiBot.makeMove();
-        }
+        afterMove(res, presenter.isCurrentRed());
     }
 
     const handleBox = function (evt) {
@@ -142,11 +169,25 @@ export default function game(window, document, settings) {
         overlay.classList.remove("show");
     }, false);
 
-    drawWithAnimation();
-    if (startRed) {
-        aiBot.makeMove();
+    afterMove(true, presenter.isCurrentRed());
+
+    function on(name, f) {
+        handlers[name] = f;
     }
+
+    function aiMove(res) {
+        const isSucc = presenter.onAiMove(res);
+        afterMove(isSucc, presenter.isCurrentRed());
+    }
+
+    function getSolver() {
+        return solver;
+    }
+
     return {
-        guess: () => aiBot.makeMove()
+        guess: () => handlers["aiMove"](presenter.matrix_result),
+        on: on,
+        aiMove: aiMove,
+        getSolver: getSolver,
     }
 }

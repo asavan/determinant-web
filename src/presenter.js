@@ -1,6 +1,6 @@
 "use strict";
 
-const presenterFunc = function (solver_, settings) {
+const presenterFunc = function (solver, settings) {
     let currentUserIsRed = settings.startRed;
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
@@ -11,10 +11,10 @@ const presenterFunc = function (solver_, settings) {
     let bestPos = -1;
     let currResult = 0;
     let step = 0;
-    const matrix_result = Array(solver_.getSizeSqr()).fill(0);
-    const player_moves = Array(solver_.getSizeSqr()).fill(false);
-    const comp_moves = Array(solver_.getSizeSqr()).fill(false);
-    const digits = Array(solver_.getSizeSqr()).fill(false);
+    const matrix_result = Array(solver.getSizeSqr()).fill(0);
+    const player_moves = Array(solver.getSizeSqr()).fill(false);
+    const comp_moves = Array(solver.getSizeSqr()).fill(false);
+    const digits = Array(solver.getSizeSqr()).fill(false);
 
     function onAiMove(res) {
         currResult = res.result;
@@ -23,7 +23,18 @@ const presenterFunc = function (solver_, settings) {
         return autoMove(bestPos, bestDigit);
     }
 
-    const getResult = () => currResult;
+    const getResult = () => {
+        if (currResult) {
+            return currResult;
+        }
+        const matrix = [];
+        solver.copy_matrix(matrix_result, matrix);
+        solver.fill_matrix(matrix);
+        const res = solver.determinant(matrix);
+        currResult = res;
+        return res;
+    };
+
     const getLastCompMove = () => lastCompMove;
 
     const getLastUserMove = () => lastUserMove;
@@ -52,7 +63,7 @@ const presenterFunc = function (solver_, settings) {
             lastCompMove = position;
         }
 
-        step = solver_.fill_digits(matrix_result, digits);
+        step = solver.fill_digits(matrix_result, digits);
 
         activeCellIndex = -1;
         activeDigitIndex = -1;
@@ -109,6 +120,8 @@ const presenterFunc = function (solver_, settings) {
         return getResult() > 0 !== startRed;
     }
 
+    const isCurrentRed = () => currentUserIsRed;
+
     const lessThanTwoMoves = () => {
         return step + 2 > matrix_result.length && getActiveDigitIndex() < 0 && getActivePosition() < 0;
     }
@@ -130,7 +143,8 @@ const presenterFunc = function (solver_, settings) {
         getStep: getStep,
         isWin: isWin,
         lessThanTwoMoves: lessThanTwoMoves,
-        tryMove: tryMove
+        tryMove: tryMove,
+        isCurrentRed: isCurrentRed
     }
 };
 
