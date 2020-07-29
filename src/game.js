@@ -58,12 +58,12 @@ function draw(presenter, box, digits) {
         if (presenter.getActiveDigitIndex() === i) {
             tile.classList.add('active');
         }
-        // if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
-        //     tile.classList.add('comp');
-        // }
-        // if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
-        //     tile.classList.add('player');
-        // }
+        if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
+            tile.classList.add('comp');
+        }
+        if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
+            tile.classList.add('player');
+        }
     }
 }
 
@@ -74,9 +74,14 @@ export default function game(window, document, settings) {
     const close = document.getElementsByClassName("close")[0];
     const btnInstall = document.getElementsByClassName("install")[0];
 
+    if (settings.size !== 3) {
+        let root = document.documentElement;
+        root.style.setProperty('--field-size', settings.size);
+    }
+
     const startRed = settings.startRed;
 
-    const solver = solverFunc(3);
+    const solver = solverFunc(settings.size);
     const presenter = presenterFunc(solver, settings);
     const aiBot = ai(solver, presenter, afterMove);
 

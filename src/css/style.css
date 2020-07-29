@@ -7,6 +7,7 @@
     --main-color: #F0F8FF;
     --comp-color: red;
     --player-color: royalblue;
+    --field-size: 3;
 }
 
 html,
@@ -66,10 +67,10 @@ footer {
 }
 
 .box {
-    max-width: 450px;
+    max-width: calc(var(--field-size) * 100px + 100px);
     max-height: 450px;
     width: 100%;
-    min-width: 350px;
+    min-width: calc(var(--field-size) * 100px + 50px);
 }
 
 .digits {

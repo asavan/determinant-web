@@ -4,5 +4,6 @@ export default {
     debug: true,
     wsPort : 8088,
     negotiatedId: 3,
-    startRed: false
+    startRed: false,
+    size: 3
 }

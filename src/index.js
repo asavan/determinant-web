@@ -44,8 +44,9 @@ function install(window, document) {
 function starter(window, document) {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const startRed = urlParams.get('startRed') ? !!JSON.parse(urlParams.get('startRed')) : false;
+    const startRed = urlParams.get('startRed') ? !!JSON.parse(urlParams.get('startRed')) : settings.startRed;
     settings.startRed = startRed;
+    settings.size = urlParams.get('size') ? parseInt(urlParams.get('size'), 10) : settings.size;
     window.gameObj = gameFunction(window, document, settings);
 }
 

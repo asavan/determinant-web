@@ -110,7 +110,7 @@ const presenterFunc = function (solver_, settings) {
     }
 
     const lessThanTwoMoves = () => {
-        return step + 2 > matrix_result.length;
+        return step + 2 > matrix_result.length && getActiveDigitIndex() < 0 && getActivePosition() < 0;
     }
 
     return {

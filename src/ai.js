@@ -91,21 +91,12 @@ function jsSolver(size_sqr, solver_) {
             bestPos = -1;
         }
 
-        if (step === 0) {
-            best2 = 40;
-            bestK = 4;
-            bestPos = randomInteger(0, size_sqr);
-            return {result: best2, bestK: bestK, bestPos: bestPos};
-        }
-
-
         for (let k = 0; k < size_sqr; ++k) {
             if (digits[k]) {
                 continue;
             }
             digits[k] = true;
-            const end = step === 1 ? 6 : size_sqr;
-            for (let i = 0; i < end; ++i) {
+            for (let i = 0; i < size_sqr; ++i) {
                 if (matrix[i] !== 0) {
                     continue;
                 }
@@ -139,6 +130,9 @@ function jsSolver(size_sqr, solver_) {
         const result = isFirstStep ? best2 : best1;
         return {result: result, bestK: bestK, bestPos: bestPos};
     };
+    return {
+        solve_matrix_flat: solve_matrix_flat
+    }
 }
 
 function ai(solver_, presenter_, afterMove) {
@@ -166,14 +160,21 @@ function ai(solver_, presenter_, afterMove) {
             return lastMoveTime;
         }
 
-        if (step === 0) {
+        if (step === 0 && solver_.getSize() === 3) {
             let bestPos = randomInteger(0, presenter_.matrix_result.length);
             onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos});
             return lastMoveTime;
         }
 
-        const matrixVal = solver_.matrix_to_int(presenter_.matrix_result);
-        myWorker.postMessage(matrixVal);
+        if (solver_.getSize() === 3) {
+            const matrixVal = solver_.matrix_to_int(presenter_.matrix_result);
+            myWorker.postMessage(matrixVal);
+        } else if (solver_.getSize() === 2) {
+            const qSolver = jsSolver(4, solver_);
+            const res = qSolver.solve_matrix_flat(presenter_.matrix_result);
+            onAiMoveWithAnimation(res);
+        }
+
         return lastMoveTime;
     };
 
