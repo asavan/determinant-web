@@ -1,14 +1,12 @@
 "use strict";
 
+import Worker from './worker.js';
 const randomInteger = (min, max) => {
     let rand = min + Math.random() * (max - min);
     return Math.floor(rand);
 };
 
-let myWorker = null;
-if (window.Worker) {
-    myWorker = new Worker("worker.js");
-}
+let myWorker = new Worker();
 
 function jsSolver(solver_) {
     const size_sqr = solver_.getSizeSqr();

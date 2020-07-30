@@ -8,6 +8,7 @@ const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const {GenerateSW} = require('workbox-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 // process.traceDeprecation = true;
 
@@ -40,6 +41,10 @@ module.exports = (env, argv) => {
                             hmr: devMode,
                         },
                     }, 'css-loader'],
+                },
+                {
+                    test: /worker\.js$/,
+                    use: { loader: 'worker-loader' },
                 }
             ]
         },
@@ -78,6 +83,11 @@ module.exports = (env, argv) => {
             })]),
             new webpack.DefinePlugin({
                 __USE_SERVICE_WORKERS__: !devMode
+            }),
+            new CopyPlugin({
+                patterns: [
+                    { from: 'src/bin', to: './' }
+                ],
             })
         ],
         devServer: {
