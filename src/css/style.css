@@ -153,6 +153,11 @@ img {
     --border-color: var(--comp-color);
 }
 
+.best {
+    color: green;
+    border: solid 2px green;
+}
+
 .cell.disabled {
     cursor: not-allowed;
     border: solid 2px var(--border-color);

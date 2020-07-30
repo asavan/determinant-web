@@ -1,3 +1,4 @@
+"use strict";
 import "./css/style.css";
 
 import settings from "./settings.js";
@@ -26,8 +27,9 @@ function starter(window, document) {
     settings.currentMode = urlParams.get('currentMode') || settings.currentMode;
     const game = gameFunction(window, document, settings);
     if (settings.currentMode === 'ai') {
-        const aiBot = ai(game.getSolver(), game.aiMove);
-        game.on('aiMove', (matrix) => aiBot.makeMove(matrix));
+        const aiBot = ai(game.getSolver());
+        game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
+        game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
     } else if (settings.currentMode === 'hotseat') {
         // do nothing
     } else if (settings.currentMode === 'net') {

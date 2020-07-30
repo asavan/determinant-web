@@ -1,3 +1,4 @@
+"use strict";
 export function getTemplateByName(name) {
     return document.querySelector(name);
 }

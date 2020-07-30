@@ -1,3 +1,5 @@
+"use strict";
+
 export default function solverFunc(size) {
     const size_sqr = size * size;
 
@@ -11,7 +13,7 @@ export default function solverFunc(size) {
     };
 
     const determinant2 = a => {
-        return a[0] * a[3] - a[1]*a[2];
+        return a[0] * a[3] - a[1] * a[2];
     };
 
     const determinant = function (a) {

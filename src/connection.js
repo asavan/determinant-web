@@ -1,3 +1,4 @@
+"use strict";
 const colors = ['blue', 'red'];
 
 function stub(message) {

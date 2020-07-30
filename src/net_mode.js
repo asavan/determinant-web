@@ -1,3 +1,5 @@
+"use strict";
+
 import connectionFunc from "./connection.js";
 import qrRender from "./qrcode.js";
 import protocol from "./protocol.js";

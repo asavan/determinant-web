@@ -18,9 +18,13 @@ export default function presenterFunc(solver, settings) {
 
     function onAiMove(res) {
         currResult = res.result;
+        return autoMove(res.bestPos, res.bestK);
+    }
+
+    function onAiHint(res) {
+        currResult = res.result;
         bestPos = res.bestPos;
         bestDigit = res.bestK;
-        return autoMove(bestPos, bestDigit);
     }
 
     const getResult = () => {
@@ -40,6 +44,9 @@ export default function presenterFunc(solver, settings) {
     const getLastUserMove = () => lastUserMove;
 
     const isLastMove = (m) => lastCompMove === m || lastUserMove === m;
+
+    const isBestDigit = (m) => bestDigit === m;
+    const isBestPosition = (m) => bestPos === m;
 
     const setMove = function(position, digit, isRed) {
         if (position < 0) {
@@ -67,6 +74,8 @@ export default function presenterFunc(solver, settings) {
 
         activeCellIndex = -1;
         activeDigitIndex = -1;
+        bestPos = -1;
+        bestDigit = -1;
         return true;
     }
 
@@ -139,11 +148,14 @@ export default function presenterFunc(solver, settings) {
         getActivePosition: getActivePosition,
         setActivePosition: setActivePosition,
         onAiMove: onAiMove,
+        onAiHint: onAiHint,
         getDigits: getDigits,
         getStep: getStep,
         isWin: isWin,
         lessThanTwoMoves: lessThanTwoMoves,
         tryMove: tryMove,
-        isCurrentRed: isCurrentRed
+        isCurrentRed: isCurrentRed,
+        isBestDigit: isBestDigit,
+        isBestPosition: isBestPosition
     }
 };

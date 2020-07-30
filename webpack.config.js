@@ -56,9 +56,7 @@ module.exports = (env, argv) => {
         plugins: [
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
-                // inject: false,
                 template: "./src/index.html",
-                // template: require("html-webpack-template"),
                 minify: false,
                 filename: devMode ? "./index.html" : "../index.html",
                 __USE_SERVICE_WORKERS__: !devMode,
@@ -68,7 +66,6 @@ module.exports = (env, argv) => {
             new ScriptExtHtmlWebpackPlugin({
                 defaultAttribute: 'async'
             }),
-            // new webpack.HotModuleReplacementPlugin(),
             new MiniCssExtractPlugin({
                 filename: devMode ? '[name].css' : '[name].[contenthash].css'
             }),

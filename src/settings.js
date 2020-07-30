@@ -5,5 +5,6 @@ export default {
     wsPort : 8088,
     negotiatedId: 3,
     startRed: false,
+    color: 'blue',
     size: 3
 }

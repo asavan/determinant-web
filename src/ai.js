@@ -131,10 +131,14 @@ function jsSolver(solver_) {
     }
 }
 
-function ai(solver_, afterMove) {
+function ai(solver_) {
     let lastMoveTime = null;
+    const handlers = {};
 
-    function onAiMoveWithAnimation(res) {
+    function onAiMoveWithAnimation(res, callback) {
+        if (!callback) {
+            console.log("No function");
+        }
         const currTime = new Date();
         const minMoveTime = 700;
         let timeRest = 0;
@@ -142,45 +146,46 @@ function ai(solver_, afterMove) {
             const timeDiff = currTime - lastMoveTime;
             timeRest = Math.max(minMoveTime - timeDiff, 0);
         }
-        setTimeout(() => afterMove(res), timeRest);
+        setTimeout(() => callback(res), timeRest);
     }
 
-    const makeMove = function (matrix_result) {
+    const makeMove = function (matrix_result, callback) {
         const digits = [];
         const step = solver_.fill_digits(matrix_result, digits);
         lastMoveTime = new Date();
         if (step === matrix_result.length) {
             let best1 = solver_.determinant(matrix_result);
-            onAiMoveWithAnimation({result: best1, bestK: -1, bestPos: -1});
+            onAiMoveWithAnimation({result: best1, bestK: -1, bestPos: -1}, callback);
             return lastMoveTime;
         }
 
         if (step === 0 && solver_.getSize() === 3) {
             let bestPos = randomInteger(0, matrix_result.length);
-            onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos});
+            onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos}, callback);
             return lastMoveTime;
         }
 
         if (solver_.getSize() === 3) {
             const matrixVal = solver_.matrix_to_int(matrix_result);
-            myWorker.postMessage({input: matrixVal, label: "solve"});
+            const label = new Date().toISOString();
+            handlers[label] = callback;
+            myWorker.postMessage({input: matrixVal, label: label});
         } else if (solver_.getSize() === 2) {
             const qSolver = jsSolver(solver_);
             const res = qSolver.solve_matrix_flat(matrix_result);
-            onAiMoveWithAnimation(res);
+            onAiMoveWithAnimation(res, callback);
         }
 
         return lastMoveTime;
     };
 
-    function onWorkerMove(val) {
-        const res = solver_.int_to_result(val);
-        onAiMoveWithAnimation(res);
-    }
-
     const handleWorkerMessage = function (e) {
         console.log(e.data.label);
-        onWorkerMove(e.data.result);
+        const res = solver_.int_to_result(e.data.result);
+        const callback = handlers[e.data.label];
+        delete handlers[e.data.label];
+        onAiMoveWithAnimation(res, callback);
+        // onAiMoveWithAnimation(res);
     };
 
     myWorker.addEventListener('message', handleWorkerMessage, false);

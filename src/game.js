@@ -49,6 +49,9 @@ function draw(presenter, box, digits) {
         if (presenter.isLastMove(i)) {
             tile.classList.add('last');
         }
+        if (presenter.isBestPosition(i)) {
+            tile.classList.add('best');
+        }
     }
 
     const digits_local = presenter.getDigits();
@@ -75,6 +78,9 @@ function draw(presenter, box, digits) {
         }
         if (i === presenter.matrix_result[presenter.getLastUserMove()] - 1) {
             tile.classList.add('player');
+        }
+        if (presenter.isBestDigit(i)) {
+            tile.classList.add('best');
         }
     }
 }
@@ -194,14 +200,20 @@ export default function game(window, document, settings) {
         afterMove(isSucc, presenter.isCurrentRed());
     }
 
+    function aiHint(res) {
+        presenter.onAiHint(res);
+        drawWithAnimation();
+    }
+
     function getSolver() {
         return solver;
     }
 
     return {
-        guess: () => handlers["aiMove"](presenter.matrix_result),
+        guess: () => handlers["aiHint"](presenter.matrix_result),
         on: on,
         aiMove: aiMove,
+        aiHint: aiHint,
         getSolver: getSolver,
     }
 }
