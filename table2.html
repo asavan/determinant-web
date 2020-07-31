@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Determinant</title>
+    <!--<link rel="stylesheet" href="game.css">-->
+    <meta name="theme-color" content="#ffffff">
+    <link id="favicon" rel="icon" href="./images/matrix_square.svg" sizes="any" type="image/svg+xml">
+    <link rel="manifest" href="./manifest.json">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+<h1>You lose</h1>
+<div style="display: flex; align-items: center;">
+    <span style="font-size: 50px; font-style: italic;">det</span>
+        <table class="matrix">
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>5</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>7</td>
+                <td>8</td>
+                <td>9</td>
+            </tr>
+        </table>
+    <span style="font-size: 50px; margin-left: 10px;"> = 0</span>
+</div>
+<style>
+    .matrix {
+        position: relative;
+        margin-left: 10px;
+    }
+    .matrix:before, .matrix:after {
+        content: "";
+        position: absolute;
+        top: 0;
+        border: 1px solid #000;
+        width: 6px;
+        height: 100%;
+    }
+    .matrix:before {
+        left: -6px;
+        border-right: 0;
+    }
+    .matrix:after {
+        right: -6px;
+        border-left: 0;
+    }
+    td {
+        font-size: 40px;
+    }
+
+</style>
+
+</body>
+</html>
