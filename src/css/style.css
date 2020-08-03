@@ -169,15 +169,11 @@ img {
     animation-duration: 1.2s;
     animation-timing-function: linear;
     animation-fill-mode: forwards;
-    /*opacity: 0;*/
-
-    /*display: none;*/
 }
 
 @media (max-width: 450px) {
     .field {
         flex-wrap: wrap;
-        /*width: 100%;*/
     }
 
     hr {

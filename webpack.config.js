@@ -6,6 +6,7 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const webpack = require('webpack');
+const HashOutput = require('webpack-plugin-hash-output');
 const {GenerateSW} = require('workbox-webpack-plugin');
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
@@ -24,7 +25,7 @@ module.exports = (env, argv) => {
         entry: {main: "./src/index.js"},
         output: {
             path: path.resolve(__dirname, "dist"),
-            filename: devMode ? "[name].js" : "[name].[contenthash].js",
+            filename: devMode ? "[name].js" : "[name].[chunkhash].js",
             publicPath: devMode ? "/" : "./dist/"
             // publicPath: "./dist/"
         },
@@ -60,11 +61,11 @@ module.exports = (env, argv) => {
         },
         plugins: [
             new CleanWebpackPlugin(),
+            new HashOutput(),
             new HtmlWebpackPlugin({
                 template: "./src/index.html",
                 minify: false,
                 filename: devMode ? "./index.html" : "../index.html",
-                __USE_SERVICE_WORKERS__: !devMode,
                 inject: 'head'
                 // filename: 'index.html'
             }),

@@ -3,8 +3,6 @@ export default function install(window, document) {
     const btnAdd = document.querySelector('.butInstall');
     let deferredPrompt;
     btnAdd.addEventListener('click', (e) => {
-        // hide our user interface that shows our A2HS button
-        // btnAdd.setAttribute('disabled', true);
         btnAdd.classList.add("hidden");
         // Show the prompt
         deferredPrompt.prompt();
