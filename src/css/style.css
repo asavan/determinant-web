@@ -73,6 +73,13 @@ footer {
     min-width: calc(var(--field-size) * 100px + 50px);
 }
 
+.qrcode.big {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--field-size) * 100px + 50px);
+}
+
 .digits {
     align-self: center;
     display: flex;
