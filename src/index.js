@@ -3,8 +3,6 @@ import "./css/style.css";
 
 import settings from "./settings.js";
 import gameFunction from "./game.js";
-import {ai} from "./ai.js";
-import netMode from "./net_mode.js";
 import install from "./install_as_app.js";
 
 function launch(f, window, document) {
@@ -27,13 +25,18 @@ function starter(window, document) {
     settings.currentMode = urlParams.get('currentMode') || settings.currentMode;
     const game = gameFunction(window, document, settings);
     if (settings.currentMode === 'ai') {
-        const aiBot = ai(game.getSolver());
-        game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
-        game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+        // import {ai} from "./ai.js";
+        import("./ai.js").then(ai => {
+            const aiBot = ai.default(game.getSolver());
+            game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
+            game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+        });
     } else if (settings.currentMode === 'hotseat') {
         // do nothing
     } else if (settings.currentMode === 'net') {
-        netMode(window, document, settings, urlParams, game);
+        import("./net_mode.js").then(netMode => {
+            netMode.default(window, document, settings, urlParams, game);
+        });
     }
     window.gameObj = game;
 }

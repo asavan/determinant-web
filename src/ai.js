@@ -129,7 +129,7 @@ function jsSolver(solver_) {
     }
 }
 
-function ai(solver_) {
+export default function ai(solver_) {
     let lastMoveTime = null;
     const handlers = {};
 
@@ -193,5 +193,3 @@ function ai(solver_) {
     }
 
 }
-
-export {ai}
