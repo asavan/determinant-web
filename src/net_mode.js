@@ -14,6 +14,9 @@ export default function netMode(window, document, settings, urlParams, game) {
     let code = null;
     connection.on('socket_open', () => {
         const url = new URL(staticHost);
+        url.searchParams = urlParams;
+        url.searchParams.delete('wh');
+        url.searchParams.delete('sh');
         url.searchParams.set('color', connection.getOtherColor(color));
         code = qrRender(url.toString(), document.querySelector(".qrcode"));
     });
