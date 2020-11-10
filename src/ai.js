@@ -13,11 +13,7 @@ function jsSolver(solver_) {
     const INF = 500;
     const MINUS_INF = -500;
 
-
-    let bestK = -1;
-    let bestPos = -1;
     const is_first = step => step % 2 === 0;
-
 
     const who_wins = function (matrix, digits, step, best1, best2) {
 
@@ -70,12 +66,13 @@ function jsSolver(solver_) {
     };
 
     const solve_matrix_flat = function (matrix_) {
-
+        let bestK = -1;
+        let bestPos = -1;
         const matrix = [];
         solver_.copy_matrix(matrix_, matrix);
 
         const digits = [];
-        let step = solver_.fill_digits(matrix, digits);
+        const step = solver_.fill_digits(matrix, digits);
         let best1 = INF;
         let best2 = MINUS_INF;
         const isFirstStep = is_first(step);
