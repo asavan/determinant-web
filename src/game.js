@@ -211,6 +211,7 @@ export default function game(window, document, settings) {
 
     return {
         guess: () => handlers["aiHint"](presenter.matrix_result),
+        forceAiMove: () => handlers["aiMove"](presenter.matrix_result),
         on: on,
         aiMove: aiMove,
         aiHint: aiHint,

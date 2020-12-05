@@ -30,6 +30,9 @@ function starter(window, document) {
             const aiBot = ai.default(game.getSolver());
             game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
             game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+            if (startRed) {
+                game.forceAiMove();
+            }
         });
     } else if (settings.currentMode === 'hotseat') {
         // do nothing
