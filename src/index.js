@@ -4,6 +4,7 @@ import "./css/style.css";
 import settings from "./settings.js";
 import gameFunction from "./game.js";
 import install from "./install_as_app.js";
+import {parseSettings} from "./helper.js";
 
 function launch(f, window, document) {
     if (document.readyState !== 'loading') {
@@ -16,32 +17,29 @@ function launch(f, window, document) {
 }
 
 function starter(window, document) {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const color = urlParams.get('color') || 'blue';
-    const startRed = color === 'red';
-    settings.startRed = startRed;
-    settings.size = urlParams.get('size') ? parseInt(urlParams.get('size'), 10) : settings.size;
-    settings.currentMode = urlParams.get('currentMode') || settings.currentMode;
-    const game = gameFunction(window, document, settings);
-    if (settings.currentMode === 'ai') {
-        // import {ai} from "./ai.js";
-        import("./ai.js").then(ai => {
-            const aiBot = ai.default(game.getSolver());
-            game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
-            game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
-            if (startRed) {
-                game.forceAiMove();
-            }
-        });
-    } else if (settings.currentMode === 'hotseat') {
-        // do nothing
-    } else if (settings.currentMode === 'net') {
+    parseSettings(window, document, settings);
+    settings.startRed = settings.color === 'red';
+
+    if (settings.currentMode === 'net') {
         import("./net_mode.js").then(netMode => {
-            netMode.default(window, document, settings, urlParams, game);
+            netMode.default(window, document, settings, gameFunction);
         });
+    } else {
+        const game = gameFunction(window, document, settings);
+        if (settings.currentMode === 'ai') {
+            import("./ai.js").then(ai => {
+                const aiBot = ai.default(game.getSolver());
+                game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
+                game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+                if (settings.startRed) {
+                    game.forceAiMove();
+                }
+            });
+        } else if (settings.currentMode === 'hotseat') {
+            // do nothing
+        }
+        window.gameObj = game;
     }
-    window.gameObj = game;
 }
 
 launch(starter, window, document);

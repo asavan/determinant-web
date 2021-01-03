@@ -33,14 +33,11 @@ const connectionFunc = function (settings) {
     }
 
     function getWebSocketUrl(socketUrl, host) {
-        if (window.location.protocol === 'https:') {
-            // if (socketUrl) {
-            //     return "wss://" + socketUrl;
-            // }
-            return null;
-        }
         if (socketUrl) {
-            return "ws://" + socketUrl;
+            return socketUrl;
+        }
+        if (window.location.protocol === 'https:') {
+            return null;
         }
         return "ws://" + host + ":" + settings.wsPort
     }
