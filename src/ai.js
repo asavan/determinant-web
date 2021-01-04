@@ -5,8 +5,12 @@ const randomInteger = (min, max) => {
     let rand = min + Math.random() * (max - min);
     return Math.floor(rand);
 };
-
-let myWorker = new Worker();
+let myWorker = null;
+try {
+    myWorker = new Worker();
+} catch (e) {
+    console.log(e);
+}
 
 function jsSolver(solver_) {
     const size_sqr = solver_.getSizeSqr();
@@ -160,12 +164,12 @@ export default function ai(solver_) {
             return lastMoveTime;
         }
 
-        if (solver_.getSize() === 3) {
+        if (solver_.getSize() === 3 && myWorker) {
             const matrixVal = solver_.matrix_to_int(matrix_result);
             const label = new Date().toISOString();
             handlers[label] = callback;
             myWorker.postMessage({input: matrixVal, label: label});
-        } else if (solver_.getSize() === 2) {
+        } else {
             const qSolver = jsSolver(solver_);
             const res = qSolver.solve_matrix_flat(matrix_result);
             onAiMoveWithAnimation(res, callback);
@@ -174,16 +178,17 @@ export default function ai(solver_) {
         return lastMoveTime;
     };
 
-    const handleWorkerMessage = function (e) {
-        console.log(e.data.label);
-        const res = solver_.int_to_result(e.data.result);
-        const callback = handlers[e.data.label];
-        delete handlers[e.data.label];
-        onAiMoveWithAnimation(res, callback);
-        // onAiMoveWithAnimation(res);
-    };
+    if (myWorker) {
+        const handleWorkerMessage = function (e) {
+            console.log(e.data.label);
+            const res = solver_.int_to_result(e.data.result);
+            const callback = handlers[e.data.label];
+            delete handlers[e.data.label];
+            onAiMoveWithAnimation(res, callback);
+        };
 
-    myWorker.addEventListener('message', handleWorkerMessage, false);
+        myWorker.addEventListener('message', handleWorkerMessage, false);
+    }
 
     return {
         makeMove: makeMove
