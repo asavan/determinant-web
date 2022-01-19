@@ -24,6 +24,19 @@ function starter(window, document) {
         import("./net_mode.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction);
         });
+    } else if (settings.currentMode === 'cheating') {
+        Promise.all([
+            import("./net_mode.js"),
+            import("./ai.js")
+        ]).then(([netMode, ai]) => {
+            netMode.default(window, document, settings, gameFunction).then(game => {
+                const aiBot = ai.default(game.getSolver());
+                // game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+                game.on('meMove', (matrix) => aiBot.makeMove(matrix, game.aiHint));
+                game.allCallbacksInited();
+            });
+
+        });
     } else {
         const game = gameFunction(window, document, settings);
         if (settings.currentMode === 'ai') {
@@ -31,9 +44,7 @@ function starter(window, document) {
                 const aiBot = ai.default(game.getSolver());
                 game.on('aiMove', (matrix) => aiBot.makeMove(matrix, game.aiMove));
                 game.on('aiHint', (matrix) => aiBot.makeMove(matrix, game.aiHint));
-                if (settings.startRed) {
-                    game.forceAiMove();
-                }
+                game.allCallbacksInited();
             });
         } else if (settings.currentMode === 'hotseat') {
             // do nothing

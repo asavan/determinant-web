@@ -59,14 +59,11 @@ const connectionFunc = function (settings) {
             handlers['socket_close']();
         }
 
-        ws.onmessage = function (e) {
-
-            const json = JSON.parse(e.data);
+        function processJson(json) {
             if (json.from === user) {
                 // console.log("same user");
                 return;
             }
-            console.log("Websocket message received: " + e.data);
 
             if (json.action === "candidate") {
                 processIce(json.data, peerConnection);
@@ -81,6 +78,23 @@ const connectionFunc = function (settings) {
                 peerConnection = connectToSecond();
             } else {
                 console.log("Unknown type " + json.action);
+            }
+        }
+
+        ws.onmessage = function (e) {
+            console.log("Websocket message received: " + e.data);
+            if (e.data instanceof Blob) {
+                const reader = new FileReader();
+                reader.onload = () => {
+                    console.log("Result blob: " + reader.result);
+                    const json = JSON.parse(reader.result);
+                    processJson(json);
+                };
+                reader.readAsText(e.data);
+            } else {
+                console.log("Result flat: " + e.data);
+                const json = JSON.parse(e.data);
+                processJson(json);
             }
         }
         ws.onerror = function (e) {

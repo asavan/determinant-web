@@ -195,6 +195,14 @@ export default function game(window, document, settings) {
         handlers[name] = f;
     }
 
+    function wrap(name, f) {
+        const oldf = handlers[name];
+        handlers[name] = (arg) => {
+            oldf(arg);
+            f(arg);
+        }
+    }
+
     function aiMove(res) {
         const isSucc = presenter.onAiMove(res);
         afterMove(isSucc, presenter.isCurrentRed());
@@ -209,10 +217,23 @@ export default function game(window, document, settings) {
         return solver;
     }
 
+    function allCallbacksInited() {
+        if (startRed) {
+            handlers["aiMove"](presenter.matrix_result);
+        } else {
+            handlers["meMove"](presenter.matrix_result)
+        }
+    }
+
+    function help() {
+        handlers["aiHint"](presenter.matrix_result);
+    }
+
     return {
-        guess: () => handlers["aiHint"](presenter.matrix_result),
-        forceAiMove: () => handlers["aiMove"](presenter.matrix_result),
+        guess: help,
+        allCallbacksInited: allCallbacksInited,
         on: on,
+        wrap: wrap,
         aiMove: aiMove,
         aiHint: aiHint,
         getSolver: getSolver,
