@@ -16,7 +16,7 @@ const handleClick = function (evt, parent) {
 
     evt.preventDefault();
     if (!(evt.target.classList.contains('cell') || evt.target.classList.contains('digit'))) {
-        return;
+        return -1;
     }
     return getIndex(evt, parent);
 };
