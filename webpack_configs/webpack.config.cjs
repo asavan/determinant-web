@@ -79,7 +79,7 @@ module.exports = (env, argv) => {
             })
         ],
         devServer: {
-            // contentBase: path.resolve(__dirname, "src"),
+            static: path.resolve(__dirname, ".."),
             historyApiFallback: true,
             compress: true,
             port: 8080,
