@@ -13,7 +13,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 // process.traceDeprecation = true;
 
 const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces()))
-    .filter(details => details.family === 'IPv4' && !details.internal)
+    .filter(details => details.family === 4 && !details.internal)
     .pop()?.address
 
 module.exports = (env, argv) => {
