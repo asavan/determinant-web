@@ -14,7 +14,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces()))
     .filter(details => details.family === 'IPv4' && !details.internal)
-    .pop().address
+    .pop()?.address
 
 module.exports = (env, argv) => {
     const devMode = !argv || (argv.mode !== 'production');

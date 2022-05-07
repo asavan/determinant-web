@@ -56,6 +56,7 @@ module.exports = (env, argv) => {
                 patterns: [
                     { from: './images', to: './images' },
                     { from: './manifest.json', to: './' },
+                    { from: './.well-known', to: './well-known' },
                     { from: 'src/bin', to: './' }
                 ],
             })

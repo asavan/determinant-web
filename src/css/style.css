@@ -96,7 +96,7 @@ hr {
     padding: 0;
 }
 
-@media (max-width: 700px) and (min-width: 450px) {
+@media (max-width: 700px) {
     .field {
         flex-wrap: wrap;
     }
@@ -185,31 +185,6 @@ img {
 
     hr {
         width: 100%;
-    }
-
-    .digits {
-        /*background: #e6f2ff;*/
-        width: 55vh;
-        min-width: 45vh;
-    }
-
-    .box {
-        width: 55vh;
-        min-width: 45vh;
-    }
-
-    .cell {
-        width: 15vh;
-        margin: 0.5vh;
-        max-width: 100px;
-        height: 15vh;
-    }
-
-    .digit {
-        width: 15vh;
-        max-width: 100px;
-        height: 15vh;
-        margin: 0.5vh;
     }
 
     .hidden2 {
