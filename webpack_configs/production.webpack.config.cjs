@@ -16,7 +16,7 @@ module.exports = (env, argv) => {
 
         entry: {main: "./src/index.js"},
         output: {
-            path: path.resolve(__dirname, "../dist"),
+            path: path.resolve(__dirname, "../docs"),
             filename: "[name].[contenthash].js"
         },
         module: {
@@ -47,24 +47,35 @@ module.exports = (env, argv) => {
             new CleanWebpackPlugin(),
             new HtmlWebpackPlugin({
                 template: "./src/index.html",
-                minify: false,
-                filename: devMode ? "./index.html" : "../index.html"
+                minify: false
             }),
             new MiniCssExtractPlugin({
-                filename: devMode ? '[name].css' : '[name].[contenthash].css'
+                filename: '[name].[contenthash].css'
             }),
-            ...(devMode ? [] : [new GenerateSW({
-                swDest: '../sw.js',
+            new GenerateSW({
+                swDest: 'sw.js',
                 // these options encourage the ServiceWorkers to get in there fast
                 // and not allow any straggling "old" SWs to hang around
                 clientsClaim: true,
                 skipWaiting: true,
-            })]),
+                exclude: [
+                    /index\.html$/,
+                    /CNAME$/,
+                    /\.nojekyll$/,
+                    /_config\.yml$/,
+                    /^.*well-known\/.*$/,
+                ]
+            }),
             new webpack.DefinePlugin({
                 __USE_SERVICE_WORKERS__: !devMode
             }),
             new CopyPlugin({
                 patterns: [
+                    { from: './images', to: './images' },
+                    { from: './github', to: './' },
+                    { from: './manifest.json', to: './' },
+                    { from: './.well-known', to: './.well-known' },
+                    { from: 'src/rules.html', to: './' },
                     { from: 'src/bin', to: './' }
                 ],
             })

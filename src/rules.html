@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Правила</title>
+    <meta name="description" content="Игра Мышь и Шомпол">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=6"/>
+    <link id="favicon" rel="icon" href="./images/matrix_square.svg" sizes="any" type="image/svg+xml">
+    <style>
+        body {
+            font-family: Verdana, Arial, Helvetica, sans-serif;
+            font-size: 1.8rem;
+        }
+
+        ul {
+            margin-top: 0;
+            margin-block-end: 1em;
+            width: 60vw;
+        }
+        li:not(:last-child) {
+            margin-bottom: 20px;
+        }
+        .flip-card {
+            background-color: transparent;
+            width: 600px;
+            height: 600px;
+            border: 1px solid #f1f1f1;
+            perspective: 1000px;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.8s;
+            transform-style: preserve-3d;
+            transform: rotateY(180deg);
+        }
+
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(0deg);
+        }
+
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+        }
+
+        .flip-card-back {
+            vertical-align: center;
+            transform: rotateY(180deg);
+            font-size: 20rem;
+            height: 100%;
+        }
+        .row {
+            display: flex;
+            justify-content: space-between;
+        }
+        a {
+            display: block;
+        }
+        @media (max-width: 600px) {
+            ul {
+                font-size: 1.5rem;
+            }
+            .flip-card {
+                display: none;
+            }
+        }
+        @media (max-width: 400px) {
+            ul {
+                font-family: 'Times New Roman', Times, serif;
+                font-size: 1rem;
+            }
+            .flip-card {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="row">
+<ul>
+    <li>Играют двое</li>
+    <li>Выигрыш одного игрока равен проигрышу другого</li>
+    <li>В матрицу 3х3 по очереди без повторений расставляются числа от 1 до 9</li>
+    <li>Когда все числа расставлены подсчитывается определитель матрицы.</li>
+    <li>Первый игрок играет за положительный детерминант, второй за отрицательный</li>
+    <li>Выигрыш первого игрока (проигрыш второго) равен размеру определителя.</li>
+</ul>
+
+<div class="flip-card">
+    <div class="flip-card-inner">
+        <div class="flip-card-front">
+            <img src="images/matrix_square.svg" alt="детерминант" width="600px" height="600px">
+        </div>
+        <div class="flip-card-back">
+            ?
+        </div>
+    </div>
+</div>
+</div>
+<a href="index.html">Играть</a>
+<a href="index.html?size=2">Попроще</a>
+</body>
+</html>

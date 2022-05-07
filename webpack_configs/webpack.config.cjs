@@ -7,10 +7,7 @@ const TerserJSPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const webpack = require('webpack');
-const {GenerateSW} = require('workbox-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
-
-// process.traceDeprecation = true;
 
 const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces()))
     .filter(details => details.family === 4 && !details.internal)
@@ -57,29 +54,24 @@ module.exports = (env, argv) => {
             new HtmlWebpackPlugin({
                 template: "./src/index.html",
                 minify: false,
-                filename: devMode ? "./index.html" : "../index.html"
             }),
             new MiniCssExtractPlugin({
                 filename: devMode ? '[name].css' : '[name].[contenthash].css'
             }),
-            ...(devMode ? [] : [new GenerateSW({
-                swDest: '../sw.js',
-                // these options encourage the ServiceWorkers to get in there fast
-                // and not allow any straggling "old" SWs to hang around
-                clientsClaim: true,
-                skipWaiting: true,
-            })]),
             new webpack.DefinePlugin({
                 __USE_SERVICE_WORKERS__: !devMode
             }),
             new CopyPlugin({
                 patterns: [
+                    { from: './images', to: './images' },
+                    { from: './manifest.json', to: './' },
+                    { from: './.well-known', to: './.well-known' },
+                    { from: 'src/rules.html', to: './' },
                     { from: 'src/bin', to: './' }
                 ],
             })
         ],
         devServer: {
-            static: path.resolve(__dirname, ".."),
             historyApiFallback: true,
             compress: true,
             port: 8080,
