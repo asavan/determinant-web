@@ -1,6 +1,7 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserJSPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
@@ -45,13 +46,14 @@ const prodConfig = (env, argv) => {
         },
         plugins: [
             new CleanWebpackPlugin(),
+            new MiniCssExtractPlugin({
+                filename: '[name].[contenthash].css'
+            }),
             new HtmlWebpackPlugin({
                 template: "./src/index.html",
                 minify: false
             }),
-            new MiniCssExtractPlugin({
-                filename: '[name].[contenthash].css'
-            }),
+            new HTMLInlineCSSWebpackPlugin.default(),
             new GenerateSW({
                 swDest: 'sw.js',
                 // these options encourage the ServiceWorkers to get in there fast
