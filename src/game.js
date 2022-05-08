@@ -97,8 +97,6 @@ export default function game(window, document, settings) {
         root.style.setProperty('--field-size', settings.size);
     }
 
-    const startRed = settings.startRed;
-
     const solver = solverFunc(settings.size);
     const presenter = presenterFunc(solver, settings);
 
@@ -113,14 +111,14 @@ export default function game(window, document, settings) {
     }
 
     function onGameEnd() {
-        const message = presenter.isWin(startRed) ? "You win" : "You lose";
+        const message = presenter.endMessage();
         const h2 = overlay.querySelector('h2');
         h2.textContent = message;
         const content = overlay.querySelector('.content');
         content.textContent = "Determinant =  " + presenter.getResult();
         overlay.classList.add('show');
         btnInstall.classList.remove('hidden2');
-        handlers['gameover'](presenter.isWin(startRed));
+        handlers['gameover']();
     }
 
     function afterMove(res, isCurrentRed) {
@@ -148,7 +146,6 @@ export default function game(window, document, settings) {
                 }
                 handlers["meMove"](presenter.matrix_result);
             }
-            // aiBot.makeMove();
         }
     }
 
@@ -218,11 +215,7 @@ export default function game(window, document, settings) {
     }
 
     function allCallbacksInited() {
-        if (startRed) {
-            handlers["aiMove"](presenter.matrix_result);
-        } else {
-            handlers["meMove"](presenter.matrix_result)
-        }
+        afterMove(true, presenter.isCurrentRed());
     }
 
     function help() {

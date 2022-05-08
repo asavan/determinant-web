@@ -1,7 +1,8 @@
 "use strict";
 
 export default function presenterFunc(solver, settings) {
-    let currentUserIsRed = settings.startRed;
+    const startRed = settings.color === 'red';
+    let currentUserIsRed = startRed;
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
     let lastCompMove = -1;
@@ -129,6 +130,10 @@ export default function presenterFunc(solver, settings) {
         return getResult() > 0 !== startRed;
     }
 
+    const endMessage = () => {
+        return isWin(startRed) ? "You win" : "You lose"
+    }
+
     const isCurrentRed = () => currentUserIsRed;
 
     const lessThanTwoMoves = () => {
@@ -151,7 +156,7 @@ export default function presenterFunc(solver, settings) {
         onAiHint: onAiHint,
         getDigits: getDigits,
         getStep: getStep,
-        isWin: isWin,
+        endMessage: endMessage,
         lessThanTwoMoves: lessThanTwoMoves,
         tryMove: tryMove,
         isCurrentRed: isCurrentRed,

@@ -17,11 +17,14 @@ function launch(f, window, document) {
 
 function starter(window, document) {
     parseSettings(window, document, settings);
-    settings.startRed = settings.color === 'red';
 
     if (settings.currentMode === 'net') {
         import("./net_mode.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction);
+        });
+    } else if (settings.currentMode === 'server') {
+        import("./serverMode.js").then(serverMode => {
+            serverMode.default(window, document, settings);
         });
     } else if (settings.currentMode === 'cheating') {
         Promise.all([

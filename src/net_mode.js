@@ -10,7 +10,7 @@ export default function netMode(window, document, settings, gameFunction) {
         const connection = connectionFunc(settings);
         const color = settings.color;
         const socketUrl = connection.getWebSocketUrl(settings.wh, window.location.hostname);
-        let staticHost = settings.sh || window.location.href;
+        const staticHost = settings.sh || window.location.href;
         connection.on('socket_open', () => {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);

@@ -7,6 +7,7 @@ function stub(message) {
 
 const connectionFunc = function (settings) {
 
+    const serverOnly = settings.currentMode === 'server';
     let ws = null;
     let user = "";
     let user2 = "";
@@ -50,9 +51,11 @@ const connectionFunc = function (settings) {
         ws.onopen = function (e) {
             console.log("Websocket opened");
             handlers['socket_open']();
-            user = color;
-            user2 = getOtherColor(color);
-            sendNegotiation("connected", {color: user}, ws);
+            if (!serverOnly) {
+                user = color;
+                user2 = getOtherColor(color);
+                sendNegotiation("connected", {color: user}, ws);
+            }
         }
         ws.onclose = function (e) {
             console.log("Websocket closed");
@@ -62,6 +65,11 @@ const connectionFunc = function (settings) {
         function processJson(json) {
             if (json.from === user) {
                 // console.log("same user");
+                return;
+            }
+
+            if (serverOnly) {
+                handlers['server_message'](json);
                 return;
             }
 
@@ -76,6 +84,8 @@ const connectionFunc = function (settings) {
                 processAnswer(json.data, peerConnection);
             } else if (json.action === "connected") {
                 peerConnection = connectToSecond();
+            } else if (json.action === "close") {
+                console.log("close " + json.from);
             } else {
                 console.log("Unknown type " + json.action);
             }
@@ -150,6 +160,7 @@ const connectionFunc = function (settings) {
         dataChannel.onopen = function () {
             console.log("------ DATACHANNEL OPENED ------");
             isConnected = true;
+            sendNegotiation("close", {}, ws);
             ws.close();
             handlers['open']();
         };
@@ -208,6 +219,7 @@ const connectionFunc = function (settings) {
             console.log(e)
         });
     }
+
     return {connect, sendMessage, on, getWebSocketUrl, getOtherColor};
 };
 
