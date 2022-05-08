@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import settings from "./src/settings.js";
+import settings from "../src/settings.js";
 const wss = new WebSocketServer({port: settings.wsPort});
 const wsList = [];
 

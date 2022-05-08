@@ -21,9 +21,7 @@ module.exports = (env, argv) => {
         entry: {main: "./src/index.js"},
         output: {
             path: path.resolve(__dirname, "dist"),
-            filename: devMode ? "[name].js" : "[name].[contenthash].js",
-            publicPath: devMode ? "/" : "./dist/"
-            // publicPath: "./dist/"
+            filename: "[name].js"
         },
         module: {
             rules: [
@@ -72,7 +70,6 @@ module.exports = (env, argv) => {
             })
         ],
         devServer: {
-            historyApiFallback: true,
             compress: true,
             port: 8080,
             hot: true,
