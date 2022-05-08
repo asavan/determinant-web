@@ -62,7 +62,9 @@ const connectionFunc = function (settings) {
             handlers['socket_close']();
         }
 
-        function processJson(json) {
+        function processText(text) {
+            console.log("Websocket message received: " + text);
+            const json = JSON.parse(text);
             if (json.from === user) {
                 // console.log("same user");
                 return;
@@ -92,28 +94,20 @@ const connectionFunc = function (settings) {
         }
 
         ws.onmessage = function (e) {
-            console.log("Websocket message received: " + e.data);
             if (e.data instanceof Blob) {
                 const reader = new FileReader();
                 reader.onload = () => {
-                    console.log("Result blob: " + reader.result);
-                    const json = JSON.parse(reader.result);
-                    processJson(json);
+                    processText(reader.result);
                 };
                 reader.readAsText(e.data);
             } else {
-                console.log("Result flat: " + e.data);
-                const json = JSON.parse(e.data);
-                processJson(json);
+                processText(e.data);
             }
         }
         ws.onerror = function (e) {
             console.log("Websocket error");
         }
     }
-
-    var config = {"iceServers": []};
-// var connection = {};
 
     let dataChannel = null;
     let isConnected = false;
@@ -185,16 +179,6 @@ const connectionFunc = function (settings) {
 
     function processOffer(offer) {
         const peerConnection = openDataChannel(ws);
-        // peerConnection.setRemoteDescription(new RTCSessionDescription(offer)).catch(e => {
-        //     console.log(e)
-        // });
-        const sdpConstraints = {
-            'mandatory':
-                {
-                    'OfferToReceiveAudio': false,
-                    'OfferToReceiveVideo': false
-                }
-        };
 
         console.log("------ PROCESSED OFFER ------");
         peerConnection.setRemoteDescription(offer)

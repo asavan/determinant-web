@@ -52,7 +52,7 @@ export default function server(window, document, settings) {
     });
 
     try {
-        connection.connect(socketUrl, SERVER_COLOR, null, settings);
+        connection.connect(socketUrl, SERVER_COLOR);
     } catch (e) {
         console.log(e);
     }

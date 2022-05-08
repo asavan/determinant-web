@@ -87,6 +87,11 @@ footer {
     min-width: 350px;
 }
 
+.qrcode {
+    width: 300px;
+    display: inline-block;
+}
+
 hr {
     display: block;
     height: 1px;
