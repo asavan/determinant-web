@@ -12,7 +12,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 module.exports = (env, argv) => {
     return {
 
-        entry: {main: "./src/index.js"},
+        entry: {main: ["./src/index.js", "./src/css/style.css"]},
         output: {
             path: path.resolve(__dirname, "../android_dist"),
             filename: "[name].[contenthash].js"

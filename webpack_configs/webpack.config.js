@@ -13,7 +13,7 @@ const devConfig = (env, argv) => {
     let addr = getLocalExternalIP() || '0.0.0.0';
     return {
 
-        entry: {main: "./src/index.js"},
+        entry: {main: ["./src/index.js", "./src/css/style.css"]},
         module: {
             rules: [
                 {
