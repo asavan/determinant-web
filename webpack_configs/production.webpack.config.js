@@ -11,7 +11,6 @@ import CopyPlugin from 'copy-webpack-plugin'
 import webpack from 'webpack'
 
 const prodConfig = (env, argv) => {
-    const devMode = false;
     const dirname = path.dirname(fileURLToPath(import.meta.url));
     return {
 
@@ -69,7 +68,7 @@ const prodConfig = (env, argv) => {
                 ]
             }),
             new webpack.DefinePlugin({
-                __USE_SERVICE_WORKERS__: !devMode
+                __USE_SERVICE_WORKERS__: true
             }),
             new CopyPlugin({
                 patterns: [

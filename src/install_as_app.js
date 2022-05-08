@@ -1,9 +1,11 @@
 "use strict";
+import {getTemplateByName, hideElem, showElem} from "./helper.js";
 export default function install(window, document) {
-    const btnAdd = document.querySelector('.butInstall');
+    const btnAdd = getTemplateByName('.butInstall');
     let deferredPrompt;
     btnAdd.addEventListener('click', (e) => {
-        btnAdd.classList.add("hidden");
+        e.preventDefault();
+        hideElem(btnAdd);
         // Show the prompt
         deferredPrompt.prompt();
         // Wait for the user to respond to the prompt
@@ -12,15 +14,12 @@ export default function install(window, document) {
         });
     });
 
-
     window.addEventListener('beforeinstallprompt', (e) => {
         // Prevent the mini-info bar from appearing.
         e.preventDefault();
         // Stash the event so it can be triggered later.
         deferredPrompt = e;
-        // Update UI notify the user they can add to home screen
-        // btnAdd.removeAttribute('disabled');
-        btnAdd.classList.remove("hidden");
+        showElem(btnAdd);
     });
     return btnAdd;
 }

@@ -5,6 +5,7 @@
   "description": "A web part of the game",
   "main": "index.js",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "ws": "node devtools/ws-server.js",
     "dev": "webpack --mode development --watch",
