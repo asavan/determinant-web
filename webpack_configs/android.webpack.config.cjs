@@ -54,8 +54,8 @@ module.exports = (env, argv) => {
             }),
             new CopyPlugin({
                 patterns: [
-                    { from: './images', to: './images' },
-                    { from: './manifest.json', to: './' },
+                    { from: './src/images', to: './images' },
+                    { from: './src/manifest.json', to: './' },
                     { from: './.well-known', to: './well-known' },
                     { from: 'src/bin', to: './' }
                 ],

@@ -71,9 +71,9 @@ const prodConfig = (env, argv) => {
             }),
             new CopyPlugin({
                 patterns: [
-                    { from: './images', to: './images' },
+                    { from: './src/images', to: './images' },
                     { from: './github', to: './' },
-                    { from: './manifest.json', to: './' },
+                    { from: './src/manifest.json', to: './' },
                     { from: './.well-known', to: './.well-known' },
                     { from: 'src/rules.html', to: './' },
                     { from: 'src/bin', to: './' }
