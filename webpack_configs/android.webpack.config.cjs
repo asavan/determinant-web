@@ -24,10 +24,6 @@ module.exports = (env, argv) => {
                     use: [{
                         loader: MiniCssExtractPlugin.loader
                     }, 'css-loader'],
-                },
-                {
-                    test: /worker\.js$/,
-                    use: { loader: 'worker-loader' },
                 }
             ]
         },

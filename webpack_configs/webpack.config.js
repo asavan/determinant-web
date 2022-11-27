@@ -21,10 +21,6 @@ const devConfig = (env, argv) => {
                     use: [{
                         loader: MiniCssExtractPlugin.loader
                     }, 'css-loader'],
-                },
-                {
-                    test: /worker\.js$/,
-                    use: { loader: 'worker-loader' },
                 }
             ]
         },
@@ -54,9 +50,7 @@ const devConfig = (env, argv) => {
             port: 8080,
             hot: true,
             open: true,
-            host: addr,
-            // clientLogLevel: 'debug',
-            // watchContentBase: true,
+            host: addr
         }
     }
 };

@@ -1,13 +1,12 @@
 "use strict";
 
-import Worker from './worker.js';
 const randomInteger = (min, max) => {
     let rand = min + Math.random() * (max - min);
     return Math.floor(rand);
 };
 let myWorker = null;
 try {
-    myWorker = new Worker();
+    myWorker = new Worker(new URL('./worker.js', import.meta.url));
 } catch (e) {
     console.log(e);
 }
