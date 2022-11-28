@@ -9,7 +9,6 @@ const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces
     .pop()?.address
 
 const devConfig = (env, argv) => {
-    const devMode = true;
     let addr = getLocalExternalIP() || '0.0.0.0';
     return {
 
