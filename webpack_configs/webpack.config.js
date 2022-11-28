@@ -30,10 +30,10 @@ const devConfig = (env, argv) => {
                 minify: false,
             }),
             new MiniCssExtractPlugin({
-                filename: devMode ? '[name].css' : '[name].[contenthash].css'
+                filename: '[name].css'
             }),
             new webpack.DefinePlugin({
-                __USE_SERVICE_WORKERS__: !devMode
+                __USE_SERVICE_WORKERS__: false
             }),
             new CopyPlugin({
                 patterns: [

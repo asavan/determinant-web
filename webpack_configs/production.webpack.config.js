@@ -5,7 +5,6 @@ import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import TerserJSPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
-import {CleanWebpackPlugin} from 'clean-webpack-plugin';
 import {GenerateSW} from 'workbox-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin'
 import webpack from 'webpack'
@@ -17,7 +16,8 @@ const prodConfig = (env, argv) => {
         entry: {main: ["./src/index.js", "./src/css/style.css"]},
         output: {
             path: path.resolve(dirname, "../docs"),
-            filename: "[name].[contenthash].js"
+            filename: "[name].[contenthash].js",
+            clean: true
         },
         module: {
             rules: [
@@ -40,7 +40,6 @@ const prodConfig = (env, argv) => {
             }), new CssMinimizerPlugin()],
         },
         plugins: [
-            new CleanWebpackPlugin(),
             new MiniCssExtractPlugin({
                 filename: '[name].[contenthash].css'
             }),

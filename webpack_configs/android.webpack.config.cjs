@@ -5,7 +5,6 @@ const HTMLInlineCSSWebpackPlugin = require("html-inline-css-webpack-plugin").def
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserJSPlugin = require('terser-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const webpack = require('webpack');
 const CopyPlugin = require('copy-webpack-plugin');
 
@@ -15,7 +14,8 @@ module.exports = (env, argv) => {
         entry: {main: ["./src/index.js", "./src/css/style.css"]},
         output: {
             path: path.resolve(__dirname, "../android_dist"),
-            filename: "[name].[contenthash].js"
+            filename: "[name].[contenthash].js",
+            clean: true
         },
         module: {
             rules: [

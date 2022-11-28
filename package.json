@@ -15,11 +15,9 @@
     "build": "webpack --config webpack_configs/production.webpack.config.js --mode production"
   },
   "devDependencies": {
-    "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.7.2",
     "css-minimizer-webpack-plugin": "^4.2.2",
-    "esm": "^3.2.25",
     "html-inline-css-webpack-plugin": "^1.11.1",
     "html-webpack-plugin": "^5.5.0",
     "mini-css-extract-plugin": "^2.7.0",
@@ -31,5 +29,9 @@
     "webpack-dev-server": "^4.11.1",
     "workbox-webpack-plugin": "^6.5.4",
     "ws": "8.11.0"
+  },
+  "resolutions": {
+    "minimatch": "^5.1.0",
+    "glob": "^8.0.3"
   }
 }
