@@ -21,4 +21,4 @@ function toMove(n) {
     return toObjJson(n, 'move');
 }
 
-export default {parser, toMove};
+export default {parser, toMove, toObjJson};

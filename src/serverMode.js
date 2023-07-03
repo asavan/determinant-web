@@ -28,7 +28,6 @@ function oneQrCode(url, code, color, qrcontainer, document) {
 
 export default function server(window, document, settings) {
     const connection = connectionFunc(settings);
-    const socketUrl = connection.getWebSocketUrl(settings.wh, window.location.hostname);
     const staticHost = settings.sh || window.location.href;
     let code = {};
     {
@@ -52,7 +51,7 @@ export default function server(window, document, settings) {
     });
 
     try {
-        connection.connect(socketUrl, SERVER_COLOR);
+        connection.connect(window.location.hostname);
     } catch (e) {
         console.log(e);
     }

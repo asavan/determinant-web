@@ -14,9 +14,11 @@ wss.on('connection', function (ws) {
 
     ws.on('message', function (message) {
         console.log('Got ws message: ' + message);
-        for (let i = 0; i < wsList.length; i++) {
-            // send to everybody on the site
-            wsList[i].send(message);
+        for (const candidate of wsList) {
+            // send to everybody on the site, except sender
+            if (candidate !== ws) {
+                candidate.send(message);
+            }
         }
     });
 });

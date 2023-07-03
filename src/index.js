@@ -24,6 +24,7 @@ function starter(window, document) {
         });
     } else if (settings.currentMode === 'server') {
         import("./serverMode.js").then(serverMode => {
+            settings.color = 'black';
             serverMode.default(window, document, settings);
         });
     } else if (settings.currentMode === 'cheating') {

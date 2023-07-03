@@ -10,7 +10,7 @@ export default function presenterFunc(solver, settings) {
 
     let bestDigit = -1;
     let bestPos = -1;
-    let currResult = 0;
+    let currGuess = 0;
     let step = 0;
     const matrix_result = Array(solver.getSizeSqr()).fill(0);
     const player_moves = Array(solver.getSizeSqr()).fill(false);
@@ -18,25 +18,22 @@ export default function presenterFunc(solver, settings) {
     const digits = Array(solver.getSizeSqr()).fill(false);
 
     function onAiMove(res) {
-        currResult = res.result;
+        currGuess = res.result;
         return autoMove(res.bestPos, res.bestK);
     }
 
     function onAiHint(res) {
-        currResult = res.result;
+        currGuess = res.result;
         bestPos = res.bestPos;
         bestDigit = res.bestK;
     }
 
     const getResult = () => {
-        if (currResult) {
-            return currResult;
-        }
         const matrix = [];
         solver.copy_matrix(matrix_result, matrix);
         solver.fill_matrix(matrix);
         const res = solver.determinant(matrix);
-        currResult = res;
+        currGuess = res;
         return res;
     };
 

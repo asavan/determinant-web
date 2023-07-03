@@ -3,13 +3,13 @@
 import connectionFunc from "./connection.js";
 import qrRender from "./qrcode.js";
 import protocol from "./protocol.js";
+import actionsFunc from "./actions.js";
 import {removeElem} from "./helper.js";
 
 export default function netMode(window, document, settings, gameFunction) {
     return new Promise((resolve, reject) => {
         const connection = connectionFunc(settings);
         const color = settings.color;
-        const socketUrl = connection.getWebSocketUrl(settings.wh, window.location.hostname);
         const staticHost = settings.sh || window.location.href;
         connection.on('socket_open', () => {
             const queryString = window.location.search;
@@ -24,27 +24,30 @@ export default function netMode(window, document, settings, gameFunction) {
             const code = qrRender(url.toString(), document.querySelector(".qrcode"));
             connection.on('socket_close', () => {
                 removeElem(code);
-                const game = gameFunction(window, document, settings);
-                connection.on('recv', (data) => {
-                    console.log(data);
-                    protocol.parser(data, 'move', (n) => {
-                        console.log("Enemy try to move " + JSON.stringify(n));
-                        game.aiMove(n);
-                    });
-                });
-                game.on('playerMove', (n) => connection.sendMessage(protocol.toMove(n)));
-                resolve(game);
             });
         });
 
         try {
-            connection.connect(socketUrl, color);
+            connection.connect(window.location.hostname);
         } catch (e) {
             console.log(e);
+            reject(e);
         }
 
         connection.on('open', () => {
             console.log("open");
+            const game = gameFunction(window, document, settings);
+            const actions = actionsFunc(game);
+            connection.on('recv', (data) => {
+                console.log(data);
+                for (const [handlerName, callback] of Object.entries(actions)) {
+                  protocol.parser(data, handlerName, callback);
+                }
+            });
+            for (const [handlerName, callback] of Object.entries(actions)) {
+                game.on(handlerName, (n) => connection.sendMessage(protocol.toObjJson(n, handlerName)));
+            }
+            resolve(game);
         });
     });
 }
