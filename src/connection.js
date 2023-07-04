@@ -100,6 +100,8 @@ const connectionFunc = function (settings) {
         return "ws://" + host + ":" + settings.wsPort
     }
 
+// inspired by http://udn.realityripple.com/docs/Web/API/WebRTC_API/Perfect_negotiation#Implementing_perfect_negotiation
+// and https://w3c.github.io/webrtc-pc/#perfect-negotiation-example
     function connect(host) {
         const socketUrl = getWebSocketUrl(settings.wh, host);
         const color = settings.color;
@@ -139,6 +141,7 @@ const connectionFunc = function (settings) {
 
         peerConnection.ondatachannel = (ev) => {
           if (dataChannel == null || polite) {
+              console.log("new channel recieved");
               setupDataChannel(ev.channel, signaling);
           }
         };
@@ -177,9 +180,7 @@ const connectionFunc = function (settings) {
                     signaling.send("description", peerConnection.localDescription);
                 }
             } else if (json.action === "connected") {
-                if (!polite) {
-                    openDataChannel(peerConnection, signaling);
-                }
+                openDataChannel(peerConnection, signaling);
             } else if (json.action === "close") {
                 // need for server
             } else {
