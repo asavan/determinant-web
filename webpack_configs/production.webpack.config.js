@@ -1,5 +1,6 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
+
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
@@ -7,6 +8,7 @@ import TerserJSPlugin from 'terser-webpack-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import {GenerateSW} from 'workbox-webpack-plugin';
 import CopyPlugin from 'copy-webpack-plugin'
+
 import webpack from 'webpack'
 
 const prodConfig = (env, argv) => {
