@@ -11,14 +11,14 @@ function parser(data, method, callback) {
 
 function toObjJson(v, method) {
     const value = {
-        'method': method
+        "method": method
     };
     value[method] = v;
     return JSON.stringify(value);
 }
 
 function toMove(n) {
-    return toObjJson(n, 'move');
+    return toObjJson(n, "move");
 }
 
 export default {parser, toMove, toObjJson};

@@ -1,7 +1,7 @@
 "use strict";
 
 export default function presenterFunc(solver, settings) {
-    const startRed = settings.color === 'red';
+    const startRed = settings.color === "red";
     let currentUserIsRed = startRed;
     let activeCellIndex = -1;
     let activeDigitIndex = -1;
@@ -75,7 +75,7 @@ export default function presenterFunc(solver, settings) {
         bestPos = -1;
         bestDigit = -1;
         return true;
-    }
+    };
 
     const autoMove = function (position, digit) {
         const res = setMove(position, digit, currentUserIsRed);
@@ -83,11 +83,11 @@ export default function presenterFunc(solver, settings) {
             currentUserIsRed = !currentUserIsRed;
         }
         return res;
-    }
+    };
 
     const tryMove = function () {
         return autoMove(getActivePosition(), getActiveDigitIndex());
-    }
+    };
 
     const setActiveDigitIndex = function (ind) {
         if (currentUserIsRed && settings.currentMode !== "hotseat") {
@@ -125,17 +125,18 @@ export default function presenterFunc(solver, settings) {
 
     const isWin = (startRed) => {
         return getResult() > 0 !== startRed;
-    }
+    };
 
     const endMessage = () => {
-        return isWin(startRed) ? "You win" : "You lose"
-    }
+        console.log(currGuess);
+        return isWin(startRed) ? "You win" : "You lose";
+    };
 
     const isCurrentRed = () => currentUserIsRed;
 
     const lessThanTwoMoves = () => {
         return step + 2 > matrix_result.length;
-    }
+    };
 
     return {
         matrix_result: matrix_result,
@@ -159,5 +160,5 @@ export default function presenterFunc(solver, settings) {
         isCurrentRed: isCurrentRed,
         isBestDigit: isBestDigit,
         isBestPosition: isBestPosition
-    }
-};
+    };
+}

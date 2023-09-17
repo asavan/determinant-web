@@ -25,7 +25,7 @@ export default function solverFunc(size) {
         }
         // TODO implement
         return size_sqr;
-    }
+    };
 
     const copy_matrix = (src, dst) => {
         for (let i = 0; i < src.length; ++i) {
@@ -78,7 +78,7 @@ export default function solverFunc(size) {
             val += matrix[i];
         }
         return val;
-    }
+    };
 
     const int_to_result = function (val) {
         const sign = val < 0 ? -1 : 1;
@@ -91,7 +91,7 @@ export default function solverFunc(size) {
         val /= 10;
         const result = sign * val;
         return {result: result, bestK: bestK, bestPos: bestPos};
-    }
+    };
 
     const getSize = () => size;
     const getSizeSqr = () => size_sqr;
@@ -105,5 +105,5 @@ export default function solverFunc(size) {
         determinant: determinant,
         getSize: getSize,
         getSizeSqr: getSizeSqr
-    }
-};
+    };
+}

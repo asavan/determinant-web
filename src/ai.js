@@ -6,7 +6,7 @@ const randomInteger = (min, max) => {
 };
 let myWorker = null;
 try {
-    myWorker = new Worker(new URL('./worker.js', import.meta.url));
+    myWorker = new Worker(new URL("./worker.js", import.meta.url));
 } catch (e) {
     console.log(e);
 }
@@ -126,7 +126,7 @@ function jsSolver(solver_) {
     };
     return {
         solve_matrix_flat: solve_matrix_flat
-    }
+    };
 }
 
 export default function ai(solver_) {
@@ -186,11 +186,11 @@ export default function ai(solver_) {
             onAiMoveWithAnimation(res, callback);
         };
 
-        myWorker.addEventListener('message', handleWorkerMessage, false);
+        myWorker.addEventListener("message", handleWorkerMessage, false);
     }
 
     return {
         makeMove: makeMove
-    }
+    };
 
 }

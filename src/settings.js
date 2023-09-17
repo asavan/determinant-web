@@ -3,6 +3,6 @@ export default {
     currentMode: "ai",
     wsPort : 8088,
     negotiatedId: 3,
-    color: 'blue',
+    color: "blue",
     size: 3
-}
+};
