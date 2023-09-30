@@ -6,7 +6,7 @@ import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import TerserJSPlugin from "terser-webpack-plugin";
 import CssMinimizerPlugin from "css-minimizer-webpack-plugin";
-import {GenerateSW} from "workbox-webpack-plugin";
+import {InjectManifest} from "workbox-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 
 import webpack from "webpack";
@@ -50,12 +50,9 @@ const prodConfig = () => {
                 minify: false
             }),
             new HTMLInlineCSSWebpackPlugin.default(),
-            new GenerateSW({
+            new InjectManifest({
                 swDest: "sw.js",
-                // these options encourage the ServiceWorkers to get in there fast
-                // and not allow any straggling "old" SWs to hang around
-                clientsClaim: true,
-                skipWaiting: true,
+                swSrc: "./src/sw.js",
                 exclude: [
                     /index\.html$/,
                     /CNAME$/,
