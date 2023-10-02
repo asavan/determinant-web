@@ -1,7 +1,7 @@
 "use strict";
 
 const randomInteger = (min, max) => {
-    let rand = min + Math.random() * (max - min);
+    const rand = min + Math.random() * (max - min);
     return Math.floor(rand);
 };
 let myWorker = null;
@@ -152,13 +152,13 @@ export default function ai(solver_) {
         const step = solver_.fill_digits(matrix_result, digits);
         lastMoveTime = new Date();
         if (step === matrix_result.length) {
-            let best1 = solver_.determinant(matrix_result);
+            const best1 = solver_.determinant(matrix_result);
             onAiMoveWithAnimation({result: best1, bestK: -1, bestPos: -1}, callback);
             return lastMoveTime;
         }
 
         if (step === 0 && solver_.getSize() === 3) {
-            let bestPos = randomInteger(0, matrix_result.length);
+            const bestPos = randomInteger(0, matrix_result.length);
             onAiMoveWithAnimation({result: 40, bestK: 4, bestPos: bestPos}, callback);
             return lastMoveTime;
         }

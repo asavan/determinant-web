@@ -39,7 +39,7 @@ export default function solverFunc(size) {
             const value = matrix[i];
             if (value > 0) {
                 ++step;
-                let index = value - 1;
+                const index = value - 1;
                 digits[index] = true;
             }
         }

@@ -9,7 +9,7 @@ const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces
     .pop()?.address;
 
 const devConfig = () => {
-    let addr = getLocalExternalIP() || "0.0.0.0";
+    const addr = getLocalExternalIP() || "0.0.0.0";
     return {
 
         entry: {main: ["./src/index.js", "./src/css/style.css"]},

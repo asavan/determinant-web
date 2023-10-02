@@ -29,7 +29,7 @@ function oneQrCode(url, code, color, qrcontainer, document) {
 export default function server(window, document, settings) {
     const connection = connectionFunc(settings);
     const staticHost = settings.sh || window.location.href;
-    let code = {};
+    const code = {};
     {
         const url = new URL(staticHost);
         url.searchParams.delete("currentMode");

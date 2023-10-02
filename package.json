@@ -13,8 +13,8 @@
     "all": "npm-run-all -p -r ws start",
     "android": "webpack --config webpack_configs/android.webpack.config.js --mode production",
     "build": "webpack --config webpack_configs/production.webpack.config.js --mode production",
-    "style": "npx eslint . -c linters/.eslintrc.json --ignore-path linters/.eslintignore",
-    "style:fix": "npx eslint . -c linters/.eslintrc.json --ignore-path linters/.eslintignore --fix",
+    "style": "npx eslint .",
+    "style:fix": "npx eslint . --fix",
     "style2": "npx stylelint --config linters/.stylelintrc.json \"src/**/*.css\"",
     "style2:fix": "npx stylelint --config linters/.stylelintrc.json \"src/**/*.css\" --fix",
     "updates": "npx ncu",
@@ -38,5 +38,8 @@
     "webpack-dev-server": "^4.15.1",
     "workbox-webpack-plugin": "^7.0.0",
     "ws": "8.14.2"
+  },
+  "dependencies": {
+    "globals": "^13.22.0"
   }
 }

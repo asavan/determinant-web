@@ -93,7 +93,7 @@ export default function game(window, document, settings) {
     const btnInstall = document.getElementsByClassName("install")[0];
 
     if (settings.size !== 3) {
-        let root = document.documentElement;
+        const root = document.documentElement;
         root.style.setProperty("--field-size", settings.size);
     }
 
