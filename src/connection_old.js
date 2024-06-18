@@ -156,7 +156,9 @@ const connectionFunc = function (settings) {
             sendNegotiation("candidate", e.candidate, ws);
         };
 
-        dataChannel = peerConnection.createDataChannel("my channel", {negotiated: true, id: localSettings.negotiatedId});
+        dataChannel = peerConnection.createDataChannel("my channel",
+            {negotiated: true, id: localSettings.negotiatedId}
+        );
         dataChannel.onmessage = function (e) {
             handlers["recv"](e.data);
         };

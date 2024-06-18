@@ -100,7 +100,8 @@ const connectionFunc = function (settings) {
         return "ws://" + host + ":" + settings.wsPort;
     }
 
-    // inspired by http://udn.realityripple.com/docs/Web/API/WebRTC_API/Perfect_negotiation#Implementing_perfect_negotiation
+    // inspired by
+    // http://udn.realityripple.com/docs/Web/API/WebRTC_API/Perfect_negotiation#Implementing_perfect_negotiation
     // and https://w3c.github.io/webrtc-pc/#perfect-negotiation-example
     function connect(host) {
         const socketUrl = getWebSocketUrl(settings.wh, host);
@@ -132,7 +133,7 @@ const connectionFunc = function (settings) {
                 console.log("make offer");
                 await peerConnection.setLocalDescription();
                 signaling.send("description", peerConnection.localDescription);
-            } catch(err) {
+            } catch (err) {
                 console.error(err);
             } finally {
                 makingOffer = false;
