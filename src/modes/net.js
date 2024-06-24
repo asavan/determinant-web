@@ -1,5 +1,3 @@
-"use strict";
-
 import connectionFunc from "../connection/connection.js";
 import { getSocketUrl, getStaticUrl } from "../connection/common.js";
 import protocol from "../connection/protocol.js";

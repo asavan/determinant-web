@@ -34,7 +34,7 @@ export function removeElem(el) {
     }
 }
 
-export function makeQrPlainEl(staticHost, el, pic = "./assets/boat7.svg") {
+export function makeQrPlainEl(staticHost, el, pic = "./images/sigma.svg") {
     const url = new URL(staticHost);
     const urlStr = chomp(url.toString(), "/");
     console.log("enemy url", urlStr);
