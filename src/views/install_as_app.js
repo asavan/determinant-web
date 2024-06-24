@@ -1,5 +1,15 @@
-"use strict";
-import {hideElem, showElem} from "./helper.js";
+function showElem(el) {
+    if (el) {
+        el.classList.remove("hidden");
+    }
+}
+
+function hideElem(el) {
+    if (el) {
+        el.classList.add("hidden");
+    }
+}
+
 export default function install(window, document) {
     const btnAdd = document.querySelector(".butInstall");
     let deferredPrompt;

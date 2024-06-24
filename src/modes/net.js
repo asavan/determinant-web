@@ -1,11 +1,11 @@
 "use strict";
 
-import connectionFunc from "./connection.js";
-import { getSocketUrl, getStaticUrl } from "./connection/common.js";
-import qrRender from "./qrcode.js";
-import protocol from "./protocol.js";
-import actionsFunc from "./actions.js";
-import {removeElem} from "./helper.js";
+import connectionFunc from "../connection/connection.js";
+import { getSocketUrl, getStaticUrl } from "../connection/common.js";
+import qrRender from "../qrcode.js";
+import protocol from "../protocol.js";
+import actionsFunc from "../actions.js";
+import {removeElem} from "../helper.js";
 
 export default function netMode(window, document, settings, gameFunction) {
     return new Promise((resolve, reject) => {

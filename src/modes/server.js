@@ -1,9 +1,8 @@
 "use strict";
 
-import {removeElem} from "./helper.js";
-import qrRender from "./qrcode.js";
-import connectionFunc from "./connection.js";
-import { getSocketUrl, getStaticUrl } from "./connection/common.js";
+import connectionFunc from "../connection/connection.js";
+import { getSocketUrl, getStaticUrl } from "../connection/common.js";
+import { makeQrPlainEl, removeElem } from "../views/qr_helper.js";
 
 const SERVER_COLOR = "black";
 
@@ -11,8 +10,8 @@ function colorizePath(elem, color) {
     if (!elem) {
         return;
     }
-    const svgPath = elem.querySelector("path");
-    if (svgPath) {
+    const svgPaths = elem.querySelectorAll("rect[fill='#000']");
+    for (const svgPath of svgPaths) {
         svgPath.style.fill = color;
     }
 }
@@ -22,7 +21,7 @@ function oneQrCode(url, code, color, qrcontainer, document) {
     element.classList.add("qrcode");
     qrcontainer.appendChild(element);
     url.searchParams.set("color", color);
-    qrRender(url.toString(), element);
+    makeQrPlainEl(url.toString(), element, "./images/sigma.svg");
     colorizePath(element, color);
     code[color] = element;
 }
@@ -56,7 +55,7 @@ export default function server(window, document, settings) {
     });
 
     try {
-        connection.connect(window.location.hostname);
+        connection.connect(socketUrl);
     } catch (e) {
         console.log(e);
     }

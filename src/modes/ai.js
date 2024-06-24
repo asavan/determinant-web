@@ -6,7 +6,7 @@ const randomInteger = (min, max) => {
 };
 let myWorker = null;
 try {
-    myWorker = new Worker(new URL("./worker.js", import.meta.url));
+    myWorker = new Worker(new URL("../worker.js", import.meta.url));
 } catch (e) {
     console.log(e);
 }

@@ -1,9 +1,9 @@
 "use strict";
 
-import install from "./install_as_app.js";
-import {launch, starter} from "./starter.js";
+import install from "./views/install_as_app.js";
+import starter from "./starter.js";
 
-launch(starter, window, document);
+starter(window, document);
 
 // eslint-disable-next-line no-undef
 if (__USE_SERVICE_WORKERS__) {

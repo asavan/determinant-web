@@ -2,34 +2,25 @@
 
 import settings from "./settings.js";
 import gameFunction from "./game.js";
-import {parseSettings} from "./helper.js";
+import { parseSettings } from "./utils/parse-settings.js";
 
-export function launch(f, window, document) {
-    if (document.readyState !== "loading") {
-        f(window, document);
-    } else {
-        document.addEventListener("DOMContentLoaded", function () {
-            f(window, document);
-        });
-    }
-}
 
-export function starter(window, document) {
-    parseSettings(window, document, settings);
+export default function starter(window, document) {
+    parseSettings(window.location.search, settings);
 
     if (settings.mode === "net") {
-        import("./net_mode.js").then(netMode => {
+        import("./modes/net.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction);
         });
     } else if (settings.mode === "server") {
-        import("./serverMode.js").then(serverMode => {
+        import("./modes/server.js").then(serverMode => {
             settings.color = "black";
             serverMode.default(window, document, settings);
         });
     } else if (settings.mode === "cheating") {
         Promise.all([
-            import("./net_mode.js"),
-            import("./ai.js")
+            import("./modes/net.js"),
+            import("./modes/ai.js")
         ]).then(([netMode, ai]) => {
             netMode.default(window, document, settings, gameFunction).then(game => {
                 const aiBot = ai.default(game.getSolver());
@@ -42,7 +33,7 @@ export function starter(window, document) {
     } else {
         const game = gameFunction(window, document, settings);
         if (settings.mode === "ai") {
-            import("./ai.js").then(ai => {
+            import("./modes/ai.js").then(ai => {
                 const aiBot = ai.default(game.getSolver());
                 game.on("aiMove", (matrix) => aiBot.makeMove(matrix, game.aiMove));
                 game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
