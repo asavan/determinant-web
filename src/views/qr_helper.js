@@ -17,7 +17,7 @@ function renderQRCodeSVG(text, divElement, pic) {
         padding: 3,
         image: {
             source: pic,
-            width: "20%",
+            width: "15%",
             height: "15%",
             x: "center",
             y: "center",

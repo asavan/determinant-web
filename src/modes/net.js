@@ -2,10 +2,9 @@
 
 import connectionFunc from "../connection/connection.js";
 import { getSocketUrl, getStaticUrl } from "../connection/common.js";
-import qrRender from "../qrcode.js";
-import protocol from "../protocol.js";
+import protocol from "../connection/protocol.js";
 import actionsFunc from "../actions.js";
-import {removeElem} from "../helper.js";
+import { makeQrPlainEl, removeElem } from "../views/qr_helper.js";
 
 export default function netMode(window, document, settings, gameFunction) {
     return new Promise((resolve, reject) => {
@@ -24,8 +23,7 @@ export default function netMode(window, document, settings, gameFunction) {
             url.search = urlParams;
             url.searchParams.set("color", connection.getOtherColor(color));
             url.searchParams.set("mode", "net");
-            console.log("enemy url", url.toString());
-            const code = qrRender(url.toString(), document.querySelector(".qrcode"));
+            const code = makeQrPlainEl(url.toString(), document.querySelector(".qrcode"), "./images/sigma.svg");
             connection.on("socket_close", () => {
                 removeElem(code);
             });

@@ -21,6 +21,7 @@ function oneQrCode(url, code, color, qrcontainer, document) {
     element.classList.add("qrcode");
     qrcontainer.appendChild(element);
     url.searchParams.set("color", color);
+    url.searchParams.set("mode", "net");
     makeQrPlainEl(url.toString(), element, "./images/sigma.svg");
     colorizePath(element, color);
     code[color] = element;
