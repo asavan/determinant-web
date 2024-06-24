@@ -17,16 +17,16 @@ export function launch(f, window, document) {
 export function starter(window, document) {
     parseSettings(window, document, settings);
 
-    if (settings.currentMode === "net") {
+    if (settings.mode === "net") {
         import("./net_mode.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction);
         });
-    } else if (settings.currentMode === "server") {
+    } else if (settings.mode === "server") {
         import("./serverMode.js").then(serverMode => {
             settings.color = "black";
             serverMode.default(window, document, settings);
         });
-    } else if (settings.currentMode === "cheating") {
+    } else if (settings.mode === "cheating") {
         Promise.all([
             import("./net_mode.js"),
             import("./ai.js")
@@ -41,14 +41,14 @@ export function starter(window, document) {
         });
     } else {
         const game = gameFunction(window, document, settings);
-        if (settings.currentMode === "ai") {
+        if (settings.mode === "ai") {
             import("./ai.js").then(ai => {
                 const aiBot = ai.default(game.getSolver());
                 game.on("aiMove", (matrix) => aiBot.makeMove(matrix, game.aiMove));
                 game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
                 game.allCallbacksInited();
             });
-        } else if (settings.currentMode === "hotseat") {
+        } else if (settings.mode === "hotseat") {
             // do nothing
         }
         window.gameObj = game;

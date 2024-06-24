@@ -81,7 +81,7 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
 
 const connectionFunc = function (settings) {
 
-    const serverOnly = settings.currentMode === "server";
+    const serverOnly = settings.mode === "server";
     // let ws = null;
 
 
@@ -89,22 +89,10 @@ const connectionFunc = function (settings) {
         handlers[name] = f;
     }
 
-
-    function getWebSocketUrl(socketUrl, host) {
-        if (socketUrl) {
-            return socketUrl;
-        }
-        if (window.location.protocol === "https:") {
-            return null;
-        }
-        return "ws://" + host + ":" + settings.wsPort;
-    }
-
     // inspired by
     // http://udn.realityripple.com/docs/Web/API/WebRTC_API/Perfect_negotiation#Implementing_perfect_negotiation
     // and https://w3c.github.io/webrtc-pc/#perfect-negotiation-example
-    function connect(host) {
-        const socketUrl = getWebSocketUrl(settings.wh, host);
+    function connect(socketUrl) {
         const color = settings.color;
         const signaling = createSignalingChannel(socketUrl, color, serverOnly);
         const peerConnection = new RTCPeerConnection();

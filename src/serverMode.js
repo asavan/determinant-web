@@ -3,6 +3,7 @@
 import {removeElem} from "./helper.js";
 import qrRender from "./qrcode.js";
 import connectionFunc from "./connection.js";
+import { getSocketUrl, getStaticUrl } from "./connection/common.js";
 
 const SERVER_COLOR = "black";
 
@@ -27,12 +28,16 @@ function oneQrCode(url, code, color, qrcontainer, document) {
 }
 
 export default function server(window, document, settings) {
+    const socketUrl = getSocketUrl(window.location, settings);
+    if (!socketUrl) {
+        console.error("No ws");
+        return;
+    }
     const connection = connectionFunc(settings);
-    const staticHost = settings.sh || window.location.href;
+    const staticHost = getStaticUrl(window.location, settings);
     const code = {};
     {
         const url = new URL(staticHost);
-        url.searchParams.delete("currentMode");
         const qrcontainer = document.querySelector(".qrcontainerserver");
         oneQrCode(url, code, "blue", qrcontainer, document);
         oneQrCode(url, code, "red", qrcontainer, document);

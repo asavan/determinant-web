@@ -90,7 +90,7 @@ export default function presenterFunc(solver, settings) {
     };
 
     const setActiveDigitIndex = function (ind) {
-        if (currentUserIsRed && settings.currentMode !== "hotseat") {
+        if (currentUserIsRed && settings.mode !== "hotseat") {
             return;
         }
         if (ind >= 0) {
@@ -105,7 +105,7 @@ export default function presenterFunc(solver, settings) {
     const getActiveDigitIndex = () => activeDigitIndex;
 
     const setActivePosition = function (pos) {
-        if (currentUserIsRed && settings.currentMode !== "hotseat") {
+        if (currentUserIsRed && settings.mode !== "hotseat") {
             return;
         }
         if (pos >= 0) {
