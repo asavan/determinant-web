@@ -123,9 +123,7 @@ export default function presenterFunc(solver, settings) {
 
     const getStep = () => step;
 
-    const isWin = (startRed) => {
-        return getResult() > 0 !== startRed;
-    };
+    const isWin = (startRed) => getResult() > 0 !== startRed;
 
     const endMessage = () => {
         console.log(currGuess);
@@ -134,9 +132,7 @@ export default function presenterFunc(solver, settings) {
 
     const isCurrentRed = () => currentUserIsRed;
 
-    const lessThanTwoMoves = () => {
-        return step + 2 > matrix_result.length;
-    };
+    const lessThanTwoMoves = () => step + 2 > matrix_result.length;
 
     return {
         matrix_result: matrix_result,

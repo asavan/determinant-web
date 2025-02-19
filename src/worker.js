@@ -5,7 +5,7 @@ const wasmReady = new Promise((resolve) => {
         });
 });
 
-self.addEventListener("message", function (e) {
+self.addEventListener("message", (e) => {
     const result = e.data.input;
     const label = e.data.label;
     if (isNaN(result)) {

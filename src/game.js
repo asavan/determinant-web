@@ -9,7 +9,9 @@ const handleClick = function (evt, parent) {
     const getIndex = function (e, parent) {
         const target = e.target || e.srcElement;
         for (let i = 0; i < parent.children.length; i++) {
-            if (parent.children[i] === target) return i;
+            if (parent.children[i] === target) {
+                return i;
+            }
         }
         return -1;
     };
@@ -181,7 +183,7 @@ export default function game(window, document, settings) {
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
-    close.addEventListener("click", function (e) {
+    close.addEventListener("click", (e) => {
         e.preventDefault();
         overlay.classList.remove("show");
     }, false);

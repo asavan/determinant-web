@@ -37,9 +37,7 @@ function getOtherColor(color) {
 function createSignalingChannel(socketUrl, color, serverOnly) {
     const ws = new WebSocket(socketUrl);
 
-    const send = (type, sdp) => {
-        return sendNegotiation(type, sdp, ws);
-    };
+    const send = (type, sdp) => sendNegotiation(type, sdp, ws);
     const close = () => {
         ws.close();
     };
@@ -99,7 +97,9 @@ const connectionFunc = function (settings) {
         window.pc = peerConnection;
 
         peerConnection.onicecandidate = function (e) {
-            if (!e) return;
+            if (!e) {
+                return;
+            }
             console.log("candidate", e.candidate);
             signaling.send("candidate", e.candidate);
         };
