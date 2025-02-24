@@ -29,9 +29,7 @@ const prodConfig = () => {
             rules: [
                 {
                     test: /\.css$/i,
-                    use: [{
-                        loader: MiniCssExtractPlugin.loader
-                    }, "css-loader"],
+                    use: [MiniCssExtractPlugin.loader, "css-loader"],
                 }
             ]
         },

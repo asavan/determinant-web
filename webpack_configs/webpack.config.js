@@ -4,12 +4,20 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import webpack from "webpack";
 
-const getLocalExternalIP = () => [].concat(...Object.values(os.networkInterfaces()))
-    .filter(details => (details.family === "IPv4" || details.family === 4) && !details.internal)
-    .pop()?.address;
+function getLocalExternalIP(defaultAddr) {
+    const cand = Object.values(os.networkInterfaces())
+        .flat()
+        .filter(a => a.family === "IPv4" && !a.internal)
+        .map(a => a.address);
+    if (cand.length === 0) {
+        return defaultAddr;
+    }
+    console.log(cand);
+    return cand.slice(-1)[0];
+}
 
 const devConfig = () => {
-    console.log(getLocalExternalIP());
+    console.log(getLocalExternalIP("0.0.0.0"));
     const addr = "0.0.0.0";
     return {
 
@@ -18,9 +26,7 @@ const devConfig = () => {
             rules: [
                 {
                     test: /\.css$/i,
-                    use: [{
-                        loader: MiniCssExtractPlugin.loader
-                    }, "css-loader"],
+                    use: [MiniCssExtractPlugin.loader, "css-loader"],
                 }
             ]
         },
