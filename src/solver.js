@@ -96,8 +96,8 @@ export default function solverFunc(size) {
         const matrix = [];
         copy_matrix(matrixOut, matrix);
         fill_matrix(matrix);
-        return  determinant(matrix);
-    }
+        return determinant(matrix);
+    };
 
     return {
         fill_digits: fill_digits,
