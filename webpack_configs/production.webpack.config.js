@@ -16,12 +16,11 @@ import { createRequire } from "module";
 const PACKAGE = createRequire(import.meta.url)("../package.json");
 
 const prodConfig = () => {
-    const dirname = path.dirname(fileURLToPath(import.meta.url));
     return {
 
         entry: {main: ["./src/index.js", "./src/css/style.css"]},
         output: {
-            path: path.resolve(dirname, "../docs"),
+            path: path.resolve(import.meta.dirname, "../docs"),
             filename: "[name].[contenthash].js",
             clean: true
         },
@@ -71,7 +70,7 @@ const prodConfig = () => {
                 patterns: [
                     { from: "./src/images", to: "./images" },
                     { from: "./github", to: "./" },
-                    { from: "./src/manifest.json", to: "./" },
+                    { from: "./src/app.webmanifest", to: "./" },
                     { from: "./.well-known", to: "./.well-known" },
                     { from: "src/rules.html", to: "./" },
                     { from: "src/bin", to: "./" }

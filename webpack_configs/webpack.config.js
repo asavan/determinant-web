@@ -45,7 +45,7 @@ const devConfig = () => {
             new CopyPlugin({
                 patterns: [
                     { from: "./src/images", to: "./images" },
-                    { from: "./src/manifest.json", to: "./" },
+                    { from: "./src/app.webmanifest", to: "./" },
                     { from: "./.well-known", to: "./.well-known" },
                     { from: "src/rules.html", to: "./" },
                     { from: "src/bin", to: "./" }
