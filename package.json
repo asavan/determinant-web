@@ -1,6 +1,6 @@
 {
   "name": "determinant-web",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "private": true,
   "description": "A web part of the game",
   "main": "index.js",
@@ -17,6 +17,9 @@
     "style:fix": "npx eslint . -c linters/eslint.config.js --fix",
     "style2": "npx stylelint --config linters/.stylelintrc.json \"src/**/*.css\"",
     "style2:fix": "npx stylelint --config linters/.stylelintrc.json \"src/**/*.css\" --fix",
+    "test": "node --test --test-reporter dot",
+    "test:verbose": "node --test",
+    "test:watch": "node --test --watch ./tests",
     "updates": "npx ncu",
     "updates:fix": "npx ncu -u && npm install"
   },

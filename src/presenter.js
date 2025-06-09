@@ -29,10 +29,7 @@ export default function presenterFunc(solver, settings) {
     }
 
     const getResult = () => {
-        const matrix = [];
-        solver.copy_matrix(matrix_result, matrix);
-        solver.fill_matrix(matrix);
-        const res = solver.determinant(matrix);
+        const res = solver.getResultFromMatrix(matrix_result);
         currGuess = res;
         return res;
     };
