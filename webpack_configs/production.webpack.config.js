@@ -1,5 +1,4 @@
 import path from "path";
-import { fileURLToPath } from "url";
 
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import HTMLInlineCSSWebpackPlugin from "html-inline-css-webpack-plugin";
@@ -11,9 +10,7 @@ import CopyPlugin from "copy-webpack-plugin";
 
 import webpack from "webpack";
 
-// import PACKAGE from "../package.json" with { type: "json" };
-import { createRequire } from "module";
-const PACKAGE = createRequire(import.meta.url)("../package.json");
+import PACKAGE from "../package.json" with { type: "json" };
 
 const prodConfig = () => {
     return {
