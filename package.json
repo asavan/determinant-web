@@ -1,6 +1,6 @@
 {
   "name": "determinant-web",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "description": "A web part of the game",
   "main": "index.js",
@@ -21,7 +21,7 @@
     "updates:fix": "npx ncu -u && npm install"
   },
   "devDependencies": {
-    "@stylistic/eslint-plugin-js": "^4.4.1",
+    "@stylistic/eslint-plugin": "^4.4.1",
     "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.2",
