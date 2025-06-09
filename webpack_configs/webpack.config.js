@@ -5,13 +5,16 @@ import CopyPlugin from "copy-webpack-plugin";
 import webpack from "webpack";
 
 function getLocalExternalIP(defaultAddr) {
-    const cand = Object.values(os.networkInterfaces())
+    let cand = Object.values(os.networkInterfaces())
         .flat()
-        .filter(a => a.family === "IPv4" && !a.internal)
-        .map(a => a.address);
+        .filter(a => a.family === "IPv4" && !a.internal);
+    if (cand.length > 1) {
+        cand = cand.filter(a => a.netmask === "255.255.255.0")
+    }
     if (cand.length === 0) {
         return defaultAddr;
     }
+    cand = cand.map(a => a.address);
     console.log(cand);
     return cand.slice(-1)[0];
 }
@@ -57,6 +60,7 @@ const devConfig = () => {
             port: 8080,
             hot: true,
             open: true,
+            static: false,
             host: addr
         }
     };

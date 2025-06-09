@@ -17,12 +17,6 @@ const handlers = {
 };
 
 
-function sendNegotiation(type, sdp, ws) {
-    const json = {from: user, to: user2, action: type, data: sdp};
-    console.log("Sending [" + user + "] to [" + user2 + "]: " + JSON.stringify(sdp));
-    return ws.send(JSON.stringify(json));
-}
-
 function getOtherColor(color) {
     for (const colorOther of colors) {
         if (color === colorOther) {
@@ -37,7 +31,12 @@ function getOtherColor(color) {
 function createSignalingChannel(socketUrl, color, serverOnly) {
     const ws = new WebSocket(socketUrl);
 
-    const send = (type, sdp) => sendNegotiation(type, sdp, ws);
+    const send = (type, sdp, to, ignore) => {
+        const toSend = to || "all";
+        const json = {from: color, to: toSend, action: type, data: sdp, ignore};
+        console.log("Sending [" + color + "] to [" + toSend + "]: " + JSON.stringify(sdp));
+        return ws.send(JSON.stringify(json));
+    }
     const close = () => {
         ws.close();
     };
@@ -49,10 +48,9 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
     ws.onopen = function (e) {
         console.log("Websocket opened", e);
         handlers["socket_open"]();
+        user = color;
         if (!serverOnly) {
-            user = color;
-            user2 = getOtherColor(color);
-            sendNegotiation("connected", {color: user}, ws);
+            send("connected", {color: color});
         }
     };
     ws.onclose = function (e) {
@@ -60,17 +58,15 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
         handlers["socket_close"]();
     };
 
-    ws.onmessage = function (e) {
+    ws.onmessage = async function (e) {
         if (e.data instanceof Blob) {
-            const reader = new FileReader();
-            reader.onload = () => {
-                result.onmessage(reader.result);
-            };
-            reader.readAsText(e.data);
+            const text = await e.data.text();
+            return result.onmessage(text);
         } else {
-            result.onmessage(e.data);
+            return result.onmessage(e.data);
         }
     };
+
     ws.onerror = function (e) {
         console.log("Websocket error", e);
     };
