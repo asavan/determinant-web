@@ -41,12 +41,10 @@ android {
 }
 
 dependencies {
-
     implementation(libs.nanohttpd)
-    implementation(libs.java.websocket)
+    implementation(libs.org.nanohttpd.nanohttpd.websocket)
     implementation(libs.androidbrowserhelper)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
 }
