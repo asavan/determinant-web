@@ -6,7 +6,6 @@ function stub(message) {
 }
 
 let user = "";
-let user2 = "";
 
 const handlers = {
     "recv": stub,
@@ -36,11 +35,10 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
         const json = {from: color, to: toSend, action: type, data: sdp, ignore};
         console.log("Sending [" + color + "] to [" + toSend + "]: " + JSON.stringify(sdp));
         return ws.send(JSON.stringify(json));
-    }
+    };
     const close = () => {
         ws.close();
     };
-
 
     const onmessage = stub;
     const result = {onmessage, send, close};
@@ -90,7 +88,6 @@ const connectionFunc = function (settings) {
         const color = settings.color;
         const signaling = createSignalingChannel(socketUrl, color, serverOnly);
         const peerConnection = new RTCPeerConnection();
-        window.pc = peerConnection;
 
         peerConnection.onicecandidate = function (e) {
             if (!e) {
@@ -150,17 +147,17 @@ const connectionFunc = function (settings) {
                 const description = json.data;
                 const readyForOffer =
                 !makingOffer &&
-                (peerConnection.signalingState == "stable" || isSettingRemoteAnswerPending);
-                const offerCollision = description.type == "offer" && !readyForOffer;
+                (peerConnection.signalingState === "stable" || isSettingRemoteAnswerPending);
+                const offerCollision = description.type === "offer" && !readyForOffer;
                 ignoreOffer = !polite && offerCollision;
                 if (ignoreOffer) {
                     console.error("ignore");
                     return;
                 }
-                isSettingRemoteAnswerPending = description.type == "answer";
+                isSettingRemoteAnswerPending = description.type === "answer";
                 await peerConnection.setRemoteDescription(description);
                 isSettingRemoteAnswerPending = false;
-                if (description.type =="offer") {
+                if (description.type === "offer") {
                     await peerConnection.setLocalDescription();
                     signaling.send("description", peerConnection.localDescription);
                 }
