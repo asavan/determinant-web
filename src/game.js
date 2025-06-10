@@ -96,10 +96,10 @@ export default function game(window, document, settings) {
     initHelper.initField(["cell", "hole"], box, false);
     initHelper.initField( ["digit"], digits, true);
 
-    const firstCell = document.querySelector(".cell");
+    const firstCell = document.querySelectorAll(".cell")[settings.helpIndex];
     firstCell?.addEventListener("dblclick", help);
 
-    const fullscreenBtn = document.querySelectorAll(".cell")[2];
+    const fullscreenBtn = document.querySelectorAll(".cell")[settings.fullScreenIndex];
     fullScreenDblClick(fullscreenBtn, document.body);
 
     box.addEventListener("click", handleBox, false);
@@ -144,7 +144,7 @@ export default function game(window, document, settings) {
         allCallbacksInited,
         on: on,
         wrap: wrap,
-        aiMove: aiMove,
+        aiMove,
         aiHint: aiHint,
         getSolver: getSolver,
     };

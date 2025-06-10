@@ -1,6 +1,3 @@
-"use strict";
-const colors = ["blue", "red"];
-
 function stub(message) {
     console.log("Stub " + message);
 }
@@ -12,20 +9,9 @@ const handlers = {
     "open": stub,
     "socket_open": stub,
     "socket_close": stub,
+    "timeout": stub,
     "close": stub,
 };
-
-
-function getOtherColor(color) {
-    for (const colorOther of colors) {
-        if (color === colorOther) {
-            continue;
-        }
-        return colorOther;
-    }
-    return "";
-}
-
 
 function createSignalingChannel(socketUrl, color, serverOnly) {
     const ws = new WebSocket(socketUrl);
@@ -72,6 +58,7 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
 }
 
 const connectionFunc = function (settings) {
+    const signal = AbortSignal.timeout(settings.connectionTimeout);
 
     const serverOnly = settings.mode === "server";
     // let ws = null;
@@ -80,13 +67,18 @@ const connectionFunc = function (settings) {
     function on(name, f) {
         handlers[name] = f;
     }
+    const abortExecutor = (e) => {
+        handlers["timeout"](e);
+    };
+    signal.addEventListener("abort", abortExecutor);
+    let signaling = null;
 
     // inspired by
     // http://udn.realityripple.com/docs/Web/API/WebRTC_API/Perfect_negotiation#Implementing_perfect_negotiation
     // and https://w3c.github.io/webrtc-pc/#perfect-negotiation-example
     function connect(socketUrl) {
         const color = settings.color;
-        const signaling = createSignalingChannel(socketUrl, color, serverOnly);
+        signaling = createSignalingChannel(socketUrl, color, serverOnly);
         const peerConnection = new RTCPeerConnection();
 
         peerConnection.onicecandidate = function (e) {
@@ -183,6 +175,7 @@ const connectionFunc = function (settings) {
         dataChannel.onopen = function () {
             console.log("------ DATACHANNEL OPENED ------");
             isConnected = true;
+            signal.removeEventListener("abort", abortExecutor);
             signaling.send("close", {});
             signaling.close();
             handlers["open"]();
@@ -222,7 +215,12 @@ const connectionFunc = function (settings) {
         });
     }
 
-    return {connect, sendMessage, on, getOtherColor};
+    const closeAll = () => {
+        dataChannel?.close();
+        signaling?.close();
+    };
+
+    return {connect, sendMessage, on, closeAll};
 };
 
 export default connectionFunc;

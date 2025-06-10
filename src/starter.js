@@ -3,10 +3,13 @@
 import gameFunction from "./game.js";
 import setupSettings from "./utils/setup-settings.js";
 
-const aiHandler = (game, ai) => {
+const aiHandler = (game, ai, showMove) => {
     const aiBot = ai.default(game.getSolver());
     game.on("aiMove", (matrix) => aiBot.makeMove(matrix, game.aiMove));
     game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
+    if (showMove) {
+        game.on("meMove", (matrix) => aiBot.makeMove(matrix, game.aiHint));
+    }
     return game.allCallbacksInited();
 };
 
@@ -46,7 +49,7 @@ function starterInner(window, document, settings) {
                     settings.mode = "ai";
                     settings.modeGuessCount = 2;
                     const game = gameFunction(window, document, settings);
-                    aiHandler(game, ai);
+                    aiHandler(game, ai, settings.showMove);
                 }
             }
             );
@@ -54,7 +57,8 @@ function starterInner(window, document, settings) {
     } else {
         const game = gameFunction(window, document, settings);
         if (settings.mode === "ai") {
-            import("./modes/ai.js").then(ai => aiHandler(game, ai));
+            import("./modes/ai.js")
+                .then(ai => aiHandler(game, ai, settings.showMove));
         } else if (settings.mode === "hotseat") {
             game.allCallbacksInited();
         }

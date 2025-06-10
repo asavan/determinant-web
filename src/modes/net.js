@@ -33,6 +33,12 @@ export default function netMode(window, document, settings, gameFunction) {
             removeElem(qrElem);
         });
 
+        connection.on("timeout", (e) => {
+            connection.closeAll();
+            console.log("Connection timeout.", e);
+            reject(e);
+        });
+
         connection.on("open", () => {
             console.log("open");
             const game = gameFunction(window, document, settings);

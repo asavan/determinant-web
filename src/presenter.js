@@ -52,6 +52,11 @@ export default function presenterFunc(solver, settings) {
             return false;
         }
 
+        if (position >= matrix_result.length) {
+            console.error("Bad position", position, digit, isRed);
+            return false;
+        }
+
         if (matrix_result[position] !== 0) {
             console.log("State error");
             return false;
@@ -76,7 +81,7 @@ export default function presenterFunc(solver, settings) {
         return true;
     };
 
-    const autoMove = function (position, digit) {
+    const autoMove = (position, digit) => {
         const res = setMove(position, digit, currentUserIsRed);
         if (res) {
             currentUserIsRed = !currentUserIsRed;
@@ -84,16 +89,14 @@ export default function presenterFunc(solver, settings) {
         return res;
     };
 
-    const tryMove = function () {
-        return autoMove(getActivePosition(), getActiveDigitIndex());
-    };
+    const tryMove = () => autoMove(getActivePosition(), getActiveDigitIndex());
 
     const setActiveDigitIndex = function (ind) {
         if (currentUserIsRed && settings.mode !== "hotseat") {
             return;
         }
         if (ind >= 0) {
-            if (digits[ind]) {
+            if (ind >= digits.length || digits[ind]) {
                 activeDigitIndex = -1;
                 return;
             }
@@ -108,13 +111,22 @@ export default function presenterFunc(solver, settings) {
             return;
         }
         if (pos >= 0) {
-            if (matrix_result[pos] > 0) {
+            if (pos >= matrix_result.length || matrix_result[pos] > 0) {
                 activeCellIndex = -1;
                 return;
             }
         }
         activeCellIndex = pos;
     };
+
+
+    function whoStarts() {
+        if(settings.mode !== "hotseat") {
+            return startRed;
+        }
+        const remainingSteps = matrix_result.length - step;
+        return remainingSteps % 2 === 0;
+    }
 
     const getActivePosition = () => activeCellIndex;
 
@@ -126,7 +138,7 @@ export default function presenterFunc(solver, settings) {
 
     const endMessage = () => {
         console.log(currGuess);
-        return isWin(startRed) ? "You win" : "You lose";
+        return isWin(whoStarts()) ? "You win" : "You lose";
     };
 
     const isCurrentRed = () => currentUserIsRed;
@@ -145,7 +157,7 @@ export default function presenterFunc(solver, settings) {
         setActiveDigitIndex: setActiveDigitIndex,
         getActivePosition: getActivePosition,
         setActivePosition,
-        onAiMove: onAiMove,
+        onAiMove,
         onAiHint: onAiHint,
         getDigits: getDigits,
         getStep: getStep,
