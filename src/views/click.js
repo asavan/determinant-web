@@ -13,4 +13,4 @@ export default function handleClick(evt) {
         return -1;
     }
     return getIndex(evt);
-};
+}

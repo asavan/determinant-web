@@ -19,5 +19,5 @@ export default function enderFunc(document, presenter) {
     }
     return {
         onGameEnd
-    }
-};
+    };
+}

@@ -14,16 +14,14 @@ function starterInner(window, document, settings) {
     if (settings.mode === "net") {
         import("./modes/net.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction)
-                .then((game) => {
-                    return game.allCallbacksInited();
-                }).catch(() => {
-                if (settings.modeGuessCount === 1) {
-                    settings.mode = "ai";
-                    settings.modeGuessCount = 2;
-                    starterInner(window, document, settings);
+                .then((game) => game.allCallbacksInited()).catch(() => {
+                    if (settings.modeGuessCount === 1) {
+                        settings.mode = "ai";
+                        settings.modeGuessCount = 2;
+                        starterInner(window, document, settings);
+                    }
                 }
-            }
-            );
+                );
         });
     } else if (settings.mode === "server") {
         import("./modes/server.js").then(serverMode => {

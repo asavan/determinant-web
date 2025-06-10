@@ -16,5 +16,5 @@ export default function initerFunc(document, fieldSize) {
     }
     return {
         initField
-    }
-};
+    };
+}

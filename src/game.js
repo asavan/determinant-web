@@ -43,37 +43,39 @@ export default function game(window, document, settings) {
         handlers["gameover"]();
     }
 
-    async function afterMove(res, isCurrentRed) {
+    async function afterMove(res) {
         await drawWithAnimation();
-        if (res) {
-            if (presenter.lessThanTwoMoves()) {
-                onGameEnd();
+        if (!res) {
+            return;
+        }
+        const isCurrentRed = presenter.isCurrentRed();
+        if (presenter.lessThanTwoMoves()) {
+            onGameEnd();
+        }
+        if (isCurrentRed) {
+            if (presenter.getLastUserMove() >= 0) {
+                handlers["playerMove"]({
+                    bestPos: presenter.getLastUserMove(),
+                    bestK: presenter.matrix_result[presenter.getLastUserMove()] - 1,
+                    result: 0
+                });
             }
-            if (isCurrentRed) {
-                if (presenter.getLastUserMove() >= 0) {
-                    handlers["playerMove"]({
-                        bestPos: presenter.getLastUserMove(),
-                        bestK: presenter.matrix_result[presenter.getLastUserMove()] - 1,
-                        result: 0
-                    });
-                }
-                handlers["aiMove"](presenter.matrix_result);
-            } else {
-                if (presenter.getLastCompMove() >= 0) {
-                    handlers["enemyMove"]({
-                        bestPos: presenter.getLastCompMove(),
-                        bestK: presenter.matrix_result[presenter.getLastCompMove()] - 1,
-                        result: 0
-                    });
-                }
-                handlers["meMove"](presenter.matrix_result);
+            handlers["aiMove"](presenter.matrix_result);
+        } else {
+            if (presenter.getLastCompMove() >= 0) {
+                handlers["enemyMove"]({
+                    bestPos: presenter.getLastCompMove(),
+                    bestK: presenter.matrix_result[presenter.getLastCompMove()] - 1,
+                    result: 0
+                });
             }
+            handlers["meMove"](presenter.matrix_result);
         }
     }
 
     function doStep() {
         const res = presenter.tryMove();
-        return afterMove(res, presenter.isCurrentRed());
+        return afterMove(res);
     }
 
     const handleBox = function (evt) {
@@ -113,7 +115,7 @@ export default function game(window, document, settings) {
 
     function aiMove(res) {
         const isSucc = presenter.onAiMove(res);
-        return afterMove(isSucc, presenter.isCurrentRed());
+        return afterMove(isSucc);
     }
 
     function aiHint(res) {
@@ -126,7 +128,7 @@ export default function game(window, document, settings) {
     }
 
     function allCallbacksInited() {
-        return afterMove(true, presenter.isCurrentRed());
+        return afterMove(true);
     }
 
     function help() {
