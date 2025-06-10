@@ -11,6 +11,7 @@
     --main-color: #F0F8FF;
     --comp-color: red;
     --player-color: royalblue;
+    --digit-color: black;
     --field-size: 3;
     --gap-size: clamp(1px, calc(100vw * 5 / 456 / 2), 5px);
     --border-size: clamp(2px, calc(var(--gap-size) / 2), 3px);
@@ -114,6 +115,7 @@ img {
 
 .cell, .digit {
     display: grid;
+    color: var(--digit-color);
     width: var(--cell-size);
     height: var(--cell-size);
     border: solid var(--border-size) var(--border-color);
@@ -139,12 +141,12 @@ img {
 
 .best {
     color: green;
-    border: solid var(--border-size) green;
+
+    --border-color: green;
 }
 
 .cell.disabled {
     cursor: not-allowed;
-    border: solid var(--border-size) var(--border-color);
 }
 
 .digit.disabled {

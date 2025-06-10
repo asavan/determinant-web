@@ -53,7 +53,7 @@ function createSignalingChannel(socketUrl, color, serverOnly) {
     };
     ws.onclose = function (e) {
         console.log("Websocket closed", e);
-        handlers["socket_close"]();
+        handlers["socket_close"](e);
     };
 
     ws.onmessage = async function (e) {

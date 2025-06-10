@@ -17,6 +17,9 @@ const handleClick = function (evt) {
     if (!(evt.target.classList.contains("cell") || evt.target.classList.contains("digit"))) {
         return -1;
     }
+    if (evt.target.classList.contains("disabled")) {
+        return -1;
+    }
     return getIndex(evt);
 };
 
@@ -24,13 +27,31 @@ async function draw(presenter, box, digits) {
     for (let i = 0; i < presenter.matrix_result.length; i++) {
         const tile = box.childNodes[i];
         const val = presenter.matrix_result[i];
-        tile.textContent = val.toString();
+
+        if (presenter.isLastMove(i)) {
+            tile.classList.add("last");
+        } else {
+            tile.classList.remove("last");
+        }
+
+        if (tile.classList.contains("disabled")) {
+            continue;
+        }
+
+        if (presenter.isBestPosition(i)) {
+            tile.classList.add("best");
+        } else {
+            tile.classList.remove("best");
+        }
 
         if (val) {
-            tile.className = "cell disabled";
-        } else {
-            tile.className = "cell hole";
+            tile.classList.remove("hole");
+            tile.textContent = val.toString();
+            tile.classList.add("disabled");
+            tile.classList.remove("active");
+            tile.classList.remove("best");
         }
+
         if (presenter.getActivePosition() === i) {
             tile.classList.add("active");
             if (presenter.isCurrentRed()) {
@@ -38,18 +59,16 @@ async function draw(presenter, box, digits) {
             } else {
                 tile.classList.add("player");
             }
+        } else {
+            tile.classList.remove("active");
+            tile.classList.remove("comp");
+            tile.classList.remove("player");
         }
         if (presenter.comp_moves[i]) {
             tile.classList.add("comp");
         }
         if (presenter.player_moves[i]) {
             tile.classList.add("player");
-        }
-        if (presenter.isLastMove(i)) {
-            tile.classList.add("last");
-        }
-        if (presenter.isBestPosition(i)) {
-            tile.classList.add("best");
         }
     }
 
@@ -61,8 +80,6 @@ async function draw(presenter, box, digits) {
             continue;
         }
         const used = digits_local[i];
-        // tile.textContent = val.toString();
-        // tile.className = "digit";
 
         if (used) {
             tile.classList.add("disabled");
@@ -76,6 +93,9 @@ async function draw(presenter, box, digits) {
             }
         } else {
             tile.classList.remove("active");
+            tile.classList.remove("comp");
+            tile.classList.remove("player");
+            tile.classList.remove("best");
         }
         if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
             tile.classList.add("comp");
@@ -90,7 +110,6 @@ async function draw(presenter, box, digits) {
         if (used) {
             await delay(650);
             if (document.startViewTransition) {
-                console.log("startViewTransition");
                 document.startViewTransition(() => {
                     // DOM mutation
                     tile.remove();
@@ -113,6 +132,11 @@ export default function game(window, document, settings) {
     if (settings.size !== 3) {
         const root = document.documentElement;
         root.style.setProperty("--field-size", settings.size);
+    }
+
+    if (settings.modeGuessCount === 2) {
+        const root = document.documentElement;
+        root.style.setProperty("--digit-color", "darkblue");
     }
 
     const solver = solverFunc(settings.size);
@@ -202,8 +226,13 @@ export default function game(window, document, settings) {
         }
     }
 
-    initField(presenter.matrix_result.length, ["cell"], box, false);
+    initField(presenter.matrix_result.length, ["cell", "hole"], box, false);
     initField(presenter.matrix_result.length, ["digit"], digits, true);
+
+    const firstCell = document.querySelector(".cell");
+    if (firstCell) {
+        firstCell.addEventListener("dblclick", help);
+    }
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);

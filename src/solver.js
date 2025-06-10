@@ -42,8 +42,12 @@ export default function solverFunc(size) {
         return step;
     }
 
+    const emptyBoolArray = () => Array(size_sqr).fill(false);
+    const emptyMatrix = () => Array(size_sqr).fill(0);
+
+
     function fill_matrix(matrix) {
-        const digits_local = Array(size_sqr).fill(false);
+        const digits_local = emptyBoolArray();
         let step = fill_digits(matrix, digits_local);
         for (let i = 0, j = 0; i < matrix.length && j < digits_local.length; ++i, ++j) {
             while (matrix[i] !== 0) {
@@ -93,7 +97,7 @@ export default function solverFunc(size) {
     const getSizeSqr = () => size_sqr;
 
     const getResultFromMatrix = (matrixOut) => {
-        const matrix = [];
+        const matrix = emptyMatrix();
         copy_matrix(matrixOut, matrix);
         fill_matrix(matrix);
         return determinant(matrix);
@@ -105,6 +109,8 @@ export default function solverFunc(size) {
         matrix_to_int: matrix_to_int,
         copy_matrix: copy_matrix,
         int_to_result: int_to_result,
+        emptyBoolArray,
+        emptyMatrix,
         getResultFromMatrix,
         determinant: determinant,
         getSize: getSize,

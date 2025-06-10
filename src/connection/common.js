@@ -13,5 +13,5 @@ export function getSocketUrl(location, settings) {
 }
 
 export function getStaticUrl(location, settings) {
-    return settings.sh || location.origin;
+    return settings.sh || (window.location.origin + window.location.pathname);
 }

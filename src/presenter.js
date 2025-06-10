@@ -12,10 +12,10 @@ export default function presenterFunc(solver, settings) {
     let bestPos = -1;
     let currGuess = 0;
     let step = 0;
-    const matrix_result = Array(solver.getSizeSqr()).fill(0);
-    const player_moves = Array(solver.getSizeSqr()).fill(false);
-    const comp_moves = Array(solver.getSizeSqr()).fill(false);
-    const digits = Array(solver.getSizeSqr()).fill(false);
+    const matrix_result = solver.emptyMatrix();
+    const player_moves = solver.emptyBoolArray();
+    const comp_moves = solver.emptyBoolArray();
+    const digits = solver.emptyBoolArray();
 
     function onAiMove(res) {
         currGuess = res.result;
@@ -60,9 +60,11 @@ export default function presenterFunc(solver, settings) {
         if (!isRed) {
             player_moves[position] = true;
             lastUserMove = position;
+            lastCompMove = -1;
         } else {
             comp_moves[position] = true;
             lastCompMove = position;
+            lastUserMove = -1;
         }
 
         step = solver.fill_digits(matrix_result, digits);
@@ -142,14 +144,14 @@ export default function presenterFunc(solver, settings) {
         getActiveDigitIndex: getActiveDigitIndex,
         setActiveDigitIndex: setActiveDigitIndex,
         getActivePosition: getActivePosition,
-        setActivePosition: setActivePosition,
+        setActivePosition,
         onAiMove: onAiMove,
         onAiHint: onAiHint,
         getDigits: getDigits,
         getStep: getStep,
         endMessage: endMessage,
         lessThanTwoMoves: lessThanTwoMoves,
-        tryMove: tryMove,
+        tryMove,
         isCurrentRed: isCurrentRed,
         isBestDigit: isBestDigit,
         isBestPosition: isBestPosition

@@ -14,25 +14,25 @@ export default function netMode(window, document, settings, gameFunction) {
         const connection = connectionFunc(settings);
         const color = settings.color;
         const staticHost = getStaticUrl(window.location, settings);
+        let qrElem = null;
+        let connectedToWebsocket = false;
         connection.on("socket_open", () => {
-            const queryString = window.location.search;
-            const urlParams = new URLSearchParams(queryString);
+            connectedToWebsocket = true;
             const url = new URL(staticHost);
-            url.search = urlParams;
-            url.searchParams.set("color", connection.getOtherColor(color));
+            if (color === "blue") {
+                url.searchParams.set("color", "red");
+            }
             url.searchParams.set("mode", "net");
-            const code = makeQrPlainEl(url.toString(), document.querySelector(".qrcode"), "./images/sigma.svg");
-            connection.on("socket_close", () => {
-                removeElem(code);
-            });
+            qrElem = makeQrPlainEl(url.toString(), document.querySelector(".qrcode"), "./images/sigma.svg");
         });
 
-        try {
-            connection.connect(socketUrl);
-        } catch (e) {
-            console.log(e);
-            reject(e);
-        }
+        connection.on("socket_close", (reason) => {
+            if (!connectedToWebsocket) {
+                reject(reason);
+                return;
+            }
+            removeElem(qrElem);
+        });
 
         connection.on("open", () => {
             console.log("open");
@@ -49,5 +49,12 @@ export default function netMode(window, document, settings, gameFunction) {
             }
             resolve(game);
         });
+
+        try {
+            connection.connect(socketUrl);
+        } catch (e) {
+            console.log(e);
+            reject(e);
+        }
     });
 }

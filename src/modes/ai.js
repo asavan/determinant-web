@@ -179,7 +179,7 @@ export default function ai(solver_) {
 
     if (myWorker) {
         const handleWorkerMessage = function (e) {
-            console.log(e.data.label);
+            // console.log(e.data.label);
             const res = solver_.int_to_result(e.data.result);
             const callback = handlers[e.data.label];
             delete handlers[e.data.label];
