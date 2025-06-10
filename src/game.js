@@ -1,29 +1,26 @@
 "use strict"; // jshint ;_;
 import solverFunc from "./solver.js";
 import presenterFunc from "./presenter.js";
+import { delay } from "./utils/timer.js";
 
 function stub() {
 }
 
-const handleClick = function (evt, parent) {
-    const getIndex = function (e, parent) {
+const handleClick = function (evt) {
+    const getIndex = function (e) {
         const target = e.target || e.srcElement;
-        for (let i = 0; i < parent.children.length; i++) {
-            if (parent.children[i] === target) {
-                return i;
-            }
-        }
-        return -1;
+        const cand = parseInt(target.dataset.num, 10);
+        return cand - 1;
     };
 
     evt.preventDefault();
     if (!(evt.target.classList.contains("cell") || evt.target.classList.contains("digit"))) {
         return -1;
     }
-    return getIndex(evt, parent);
+    return getIndex(evt);
 };
 
-function draw(presenter, box, digits) {
+async function draw(presenter, box, digits) {
     for (let i = 0; i < presenter.matrix_result.length; i++) {
         const tile = box.childNodes[i];
         const val = presenter.matrix_result[i];
@@ -58,11 +55,14 @@ function draw(presenter, box, digits) {
 
     const digits_local = presenter.getDigits();
     for (let i = 0; i < presenter.matrix_result.length; i++) {
-        const tile = digits.childNodes[i];
-        const used = digits_local[i];
         const val = i + 1;
-        tile.textContent = val.toString();
-        tile.className = "digit";
+        const tile = digits.querySelector(`div[data-num="${val}"]`);
+        if (!tile) {
+            continue;
+        }
+        const used = digits_local[i];
+        // tile.textContent = val.toString();
+        // tile.className = "digit";
 
         if (used) {
             tile.classList.add("disabled");
@@ -74,6 +74,8 @@ function draw(presenter, box, digits) {
             } else {
                 tile.classList.add("player");
             }
+        } else {
+            tile.classList.remove("active");
         }
         if (i === presenter.matrix_result[presenter.getLastCompMove()] - 1) {
             tile.classList.add("comp");
@@ -83,6 +85,20 @@ function draw(presenter, box, digits) {
         }
         if (presenter.isBestDigit(i)) {
             tile.classList.add("best");
+        }
+
+        if (used) {
+            await delay(650);
+            if (document.startViewTransition) {
+                console.log("startViewTransition");
+                document.startViewTransition(() => {
+                    // DOM mutation
+                    tile.remove();
+                });
+            } else {
+                // Alternative if no browser support
+                tile.remove();
+            }
         }
     }
 }
@@ -123,8 +139,8 @@ export default function game(window, document, settings) {
         handlers["gameover"]();
     }
 
-    function afterMove(res, isCurrentRed) {
-        drawWithAnimation();
+    async function afterMove(res, isCurrentRed) {
+        await drawWithAnimation();
         if (res) {
             if (presenter.lessThanTwoMoves()) {
                 onGameEnd();
@@ -153,33 +169,41 @@ export default function game(window, document, settings) {
 
     function doStep() {
         const res = presenter.tryMove();
-        afterMove(res, presenter.isCurrentRed());
+        return afterMove(res, presenter.isCurrentRed());
     }
 
     const handleBox = function (evt) {
-        presenter.setActivePosition(handleClick(evt, box));
-        doStep();
+        presenter.setActivePosition(handleClick(evt));
+        return doStep();
     };
 
     const handleClickDigits = function (evt) {
-        presenter.setActiveDigitIndex(handleClick(evt, digits));
-        doStep();
+        presenter.setActiveDigitIndex(handleClick(evt));
+        return doStep();
     };
 
     function drawWithAnimation() {
-        draw(presenter, box, digits);
+        return draw(presenter, box, digits);
     }
 
-    function initField(fieldSize, className, elem) {
+    function initField(fieldSize, classNames, elem, addCard) {
         for (let i = 0; i < fieldSize; i++) {
             const cell = document.createElement("div");
-            cell.className = className;
+            for (const className of classNames) {
+                cell.classList.add(className);
+            }
+            const num = i + 1;
+            cell.dataset.num = num;
+            if (addCard) {
+                cell.classList.add("card-"+num);
+                cell.textContent = num;
+            }
             elem.appendChild(cell);
         }
     }
 
-    initField(presenter.matrix_result.length, "cell", box);
-    initField(presenter.matrix_result.length, "digit", digits);
+    initField(presenter.matrix_result.length, ["cell"], box, false);
+    initField(presenter.matrix_result.length, ["digit"], digits, true);
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);
@@ -204,7 +228,7 @@ export default function game(window, document, settings) {
 
     function aiMove(res) {
         const isSucc = presenter.onAiMove(res);
-        afterMove(isSucc, presenter.isCurrentRed());
+        return afterMove(isSucc, presenter.isCurrentRed());
     }
 
     function aiHint(res) {
@@ -217,7 +241,7 @@ export default function game(window, document, settings) {
     }
 
     function allCallbacksInited() {
-        afterMove(true, presenter.isCurrentRed());
+        return afterMove(true, presenter.isCurrentRed());
     }
 
     function help() {
