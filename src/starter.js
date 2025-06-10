@@ -7,13 +7,16 @@ const aiHandler = (game, ai) => {
     const aiBot = ai.default(game.getSolver());
     game.on("aiMove", (matrix) => aiBot.makeMove(matrix, game.aiMove));
     game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
-    game.allCallbacksInited();
+    return game.allCallbacksInited();
 };
 
 function starterInner(window, document, settings) {
     if (settings.mode === "net") {
         import("./modes/net.js").then(netMode => {
-            netMode.default(window, document, settings, gameFunction).catch(() => {
+            netMode.default(window, document, settings, gameFunction)
+                .then((game) => {
+                    return game.allCallbacksInited();
+                }).catch(() => {
                 if (settings.modeGuessCount === 1) {
                     settings.mode = "ai";
                     settings.modeGuessCount = 2;
@@ -36,7 +39,7 @@ function starterInner(window, document, settings) {
                 const aiBot = ai.default(game.getSolver());
                 game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
                 game.on("meMove", (matrix) => aiBot.makeMove(matrix, game.aiHint));
-                game.allCallbacksInited();
+                return game.allCallbacksInited();
             }).catch(() => {
                 if (settings.modeGuessCount === 1) {
                     settings.mode = "ai";
@@ -52,7 +55,7 @@ function starterInner(window, document, settings) {
         if (settings.mode === "ai") {
             import("./modes/ai.js").then(ai => aiHandler(game, ai));
         } else if (settings.mode === "hotseat") {
-            // do nothing
+            game.allCallbacksInited();
         }
         window.gameObj = game;
     }
