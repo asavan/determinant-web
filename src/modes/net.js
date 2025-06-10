@@ -22,7 +22,6 @@ export default function netMode(window, document, settings, gameFunction) {
             if (color === "blue") {
                 url.searchParams.set("color", "red");
             }
-            url.searchParams.set("mode", "net");
             qrElem = makeQrPlainEl(url.toString(), document.querySelector(".qrcode"), "./images/sigma.svg");
         });
 

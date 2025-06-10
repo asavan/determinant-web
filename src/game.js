@@ -5,6 +5,7 @@ import draw from "./views/draw.js";
 import initerFunc from "./views/initer.js";
 import enderFunc from "./views/ender.js";
 import handleClick from "./views/click.js";
+import {fullScreenDblClick} from "./views/fullscreen.js";
 
 function stub() {
 }
@@ -97,6 +98,9 @@ export default function game(window, document, settings) {
 
     const firstCell = document.querySelector(".cell");
     firstCell?.addEventListener("dblclick", help);
+
+    const fullscreenBtn = document.querySelectorAll(".cell")[2];
+    fullScreenDblClick(fullscreenBtn, document.body);
 
     box.addEventListener("click", handleBox, false);
     digits.addEventListener("click", handleClickDigits, false);

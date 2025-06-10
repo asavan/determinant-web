@@ -11,6 +11,7 @@ const aiHandler = (game, ai) => {
 };
 
 function starterInner(window, document, settings) {
+    console.log("starter", settings);
     if (settings.mode === "net") {
         import("./modes/net.js").then(netMode => {
             netMode.default(window, document, settings, gameFunction)
@@ -36,7 +37,9 @@ function starterInner(window, document, settings) {
             netMode.default(window, document, settings, gameFunction).then(game => {
                 const aiBot = ai.default(game.getSolver());
                 game.on("aiHint", (matrix) => aiBot.makeMove(matrix, game.aiHint));
-                game.on("meMove", (matrix) => aiBot.makeMove(matrix, game.aiHint));
+                if (settings.showMove) {
+                    game.on("meMove", (matrix) => aiBot.makeMove(matrix, game.aiHint));
+                }
                 return game.allCallbacksInited();
             }).catch(() => {
                 if (settings.modeGuessCount === 1) {
@@ -61,6 +64,5 @@ function starterInner(window, document, settings) {
 
 export default function starter(window, document) {
     const settings = setupSettings(window);
-    console.log("starter", settings);
     starterInner(window, document, settings);
 }

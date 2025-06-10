@@ -29,6 +29,10 @@ body {
     flex-direction: column;
 }
 
+body::backdrop {
+    background-color: white;
+}
+
 .content {
     flex: 1 0 auto;
 }

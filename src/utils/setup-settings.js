@@ -5,13 +5,12 @@ export function adjustMode(changed, settings, location) {
     if (settings.mode !== "auto") {
         return;
     }
-    if (location.protocol === "https:") {
+    if (location.protocol === "https:" || location.protocol === "file:") {
         settings.mode = "ai";
     } else {
+        settings.mode = "cheating";
         if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-            settings.mode = "cheating";
-        } else {
-            settings.mode = "net";
+            settings.showMove = true;
         }
     }
     settings.modeGuessCount = 1;

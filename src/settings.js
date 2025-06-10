@@ -3,5 +3,6 @@ export default {
     mode: "auto",
     wsPort : 8088,
     color: "blue",
+    showMove: false,
     size: 3
 };
