@@ -121,7 +121,7 @@ export default function presenterFunc(solver, settings) {
 
 
     function whoStarts() {
-        if(settings.mode !== "hotseat") {
+        if (settings.mode !== "hotseat") {
             return startRed;
         }
         const remainingSteps = matrix_result.length - step;
