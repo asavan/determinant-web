@@ -8,5 +8,6 @@ export default {
     helpIndex: 0,
     fullScreenIndex: 2,
     connectionTimeout: 30000,
+    moveTimeout: 30000,
     size: 3
 };

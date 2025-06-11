@@ -6,6 +6,7 @@ import initerFunc from "./views/initer.js";
 import enderFunc from "./views/ender.js";
 import handleClick from "./views/click.js";
 import {fullScreenDblClick} from "./views/fullscreen.js";
+import reminder from "./views/reminder.js";
 
 function stub() {
 }
@@ -119,6 +120,9 @@ export default function game(window, document, settings) {
 
     function aiMove(res) {
         const isSucc = presenter.onAiMove(res);
+        if (isSucc && !presenter.lessThanTwoMoves()) {
+            reminder(presenter.getStep, settings.moveTimeout, help);
+        }
         return afterMove(isSucc);
     }
 
