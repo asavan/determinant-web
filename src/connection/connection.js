@@ -138,7 +138,7 @@ const connectionFunc = function (settings) {
             } else if (json.action === "description") {
                 const description = json.data;
                 const readyForOffer =
-                !makingOffer &&
+                    !makingOffer &&
                 (peerConnection.signalingState === "stable" || isSettingRemoteAnswerPending);
                 const offerCollision = description.type === "offer" && !readyForOffer;
                 ignoreOffer = !polite && offerCollision;
