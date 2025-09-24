@@ -70,7 +70,7 @@ footer {
     display: grid;
     grid-template-columns: repeat(var(--field-size), var(--cell-size));
     grid-template-rows: repeat(var(--field-size), var(--cell-size));
-    grid-gap: var(--gap-size);
+    gap: var(--gap-size);
     padding: 10px;
 }
 
