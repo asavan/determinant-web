@@ -1,4 +1,4 @@
-import {delay} from "../utils/timer.js";
+import {delay} from "netutils";
 
 export default async function draw(presenter, box, digits) {
     for (let i = 0; i < presenter.matrix_result.length; i++) {

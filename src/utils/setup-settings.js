@@ -1,4 +1,4 @@
-import {parseSettings} from "./parse-settings.js";
+import {parseSettings} from "netutils";
 import settingsOriginal from "../settings.js";
 
 export function adjustMode(changed, settings, location) {
