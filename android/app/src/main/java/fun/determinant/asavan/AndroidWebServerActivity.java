@@ -12,8 +12,10 @@ import java.util.Map;
 
 public class AndroidWebServerActivity extends Activity {
     private static final int STATIC_CONTENT_PORT = 8080;
-    private static final int WEB_SOCKET_PORT = 8088;
-    public static final String WEB_VIEW_URL = "file:///android_asset/www/index.html";
+    private static final int WEB_SOCKET_PORT = 8080;
+    // public static final String WEB_VIEW_URL = "file:///android_asset/www/index.html";
+    public static final String WEB_VIEW_URL = "https://appassets.androidplatform.net/assets/www/index.html";
+
     public static final String MAIN_LOG_TAG = "DETERMINANT_TAG";
     private static final boolean secure = false;
 
@@ -23,7 +25,7 @@ public class AndroidWebServerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        btnUtils = new BtnUtils(this, STATIC_CONTENT_PORT, WEB_SOCKET_PORT, secure);
+        btnUtils = new BtnUtils(this, STATIC_CONTENT_PORT);
         try {
             addButtons(IpUtils.getIPAddressSafe());
             btnUtils.launchWebView(WEB_VIEW_URL, null);

@@ -8,10 +8,10 @@ android {
 
     defaultConfig {
         applicationId = "fun.determinant.asavan"
-        minSdk = 23
+        minSdk = 24
         targetSdk = 37
-        versionCode = 20
-        versionName = "1.5.0"
+        versionCode = 21
+        versionName = "1.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -29,10 +29,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            optimization {
+                enable = false
+            }
         }
     }
     compileOptions {
@@ -45,6 +44,7 @@ dependencies {
     implementation(libs.nanohttpd)
     implementation(libs.org.nanohttpd.nanohttpd.websocket)
     implementation(libs.androidbrowserhelper)
+    implementation(libs.webkit)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

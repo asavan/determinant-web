@@ -16,19 +16,16 @@ import java.util.Map;
 
 import androidx.browser.trusted.TrustedWebActivityIntentBuilder;
 
+import fi.iki.elonen.NanoHTTPD;
+
 public class BtnUtils {
     private final int staticContentPort;
-    private final int webSocketPort;
-    private final boolean secure;
     private final Activity activity;
-    private AndroidStaticAssetsServer server = null;
-    private WebSocketBroadcastServer webSocketServer = null;
+    private WebServer server = null;
 
-    public BtnUtils(Activity activity, int staticContentPort, int webSocketPort, boolean secure) {
+    public BtnUtils(Activity activity, int staticContentPort) {
         this.staticContentPort = staticContentPort;
-        this.webSocketPort = webSocketPort;
         this.activity = activity;
-        this.secure = secure;
     }
 
     public void launchWebView(String host, Map<String, String> parameters) {
@@ -77,9 +74,6 @@ public class BtnUtils {
         launchWebView(host, parameters);
     }
 
-
-
-
     private void launchTwa(String host, Map<String, String> parameters) {
         startServerAndSocket();
         Uri launchUri = Uri.parse(UrlUtils.getLaunchUrl(host, parameters));
@@ -93,11 +87,8 @@ public class BtnUtils {
         }
         try {
             Context applicationContext = activity.getApplicationContext();
-            server = new AndroidStaticAssetsServer(applicationContext, staticContentPort, secure, "www");
-            if (webSocketServer == null) {
-                webSocketServer = new WebSocketBroadcastServer(applicationContext, webSocketPort, secure);
-                webSocketServer.start(0);
-            }
+            server = new WebServer(applicationContext, staticContentPort);
+            server.start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
         } catch (Exception e) {
             TextView textIpAddress2 = activity.findViewById(R.id.ipaddr2);
             textIpAddress2.setText(Arrays.toString(e.getStackTrace()));
@@ -109,8 +100,6 @@ public class BtnUtils {
         if (server != null) {
             server.stop();
         }
-        if (webSocketServer != null) {
-            webSocketServer.stop();
-        }
+        server = null;
     }
 }
