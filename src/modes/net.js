@@ -1,14 +1,13 @@
 import connectionFunc from "../connection/connection.js";
-import protocol from "../connection/protocol.js";
 import actionsFunc from "../actions.js";
 
 import {
     makeQrElement,
     removeElem,
+    wrapNetworkToNegotiator,
+    wrapActionsToNegotiator,
     netObj
 } from "netutils";
-
-
 
 export default function netMode(window, document, settings, gameFunction) {
     return new Promise((resolve, reject) => {
@@ -56,20 +55,10 @@ export default function netMode(window, document, settings, gameFunction) {
             console.log("open");
             const game = gameFunction(window, document, settings);
             const actions = actionsFunc(game);
-            // wrapNetworkToNegotiator,
-            //     wrapActionsToNegotiator,
-            // const neg1 = wrapNetworkToNegotiator(connection);
-            // const gameNeg = wrapActionsToNegotiator(actions, "game", game);
-            // neg1.registerHandler(gameNeg);
-            connection.on("message", (data) => {
-                console.log(data);
-                for (const [handlerName, callback] of Object.entries(actions)) {
-                    protocol.parser(data, handlerName, callback);
-                }
-            });
-            for (const [handlerName, ] of Object.entries(actions)) {
-                game.on(handlerName, (n) => connection.sendMessage(protocol.toObjJson(n, handlerName)));
-            }
+
+            const neg1 = wrapNetworkToNegotiator(connection);
+            const gameNeg = wrapActionsToNegotiator(actions, "game", game);
+            neg1.registerHandler(gameNeg);
             resolve(game);
         });
 

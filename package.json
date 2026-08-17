@@ -21,10 +21,15 @@
     "updates": "npx ncu",
     "updates:fix": "npx ncu -u && npm install"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/asavan/determinant-web.git"
+  },
+  "homepage": "https://github.com/asavan/determinant-web",
   "devDependencies": {
-    "devdeps": "github:asavan/dev-deps#v0.1.1"
+    "devdeps": "github:asavan/dev-deps#v0.1.2"
   },
   "dependencies": {
-    "netutils": "github:asavan/netutils#847574bbd25f6f4188f5f0bba29352e05a261b50"
+    "netutils": "github:asavan/netutils#v0.1.9"
   }
 }

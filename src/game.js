@@ -1,4 +1,3 @@
-"use strict"; // jshint ;_;
 import solverFunc from "./solver.js";
 import presenterFunc from "./presenter.js";
 import draw from "./views/draw.js";

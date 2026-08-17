@@ -1,5 +1,3 @@
-"use strict";
-
 export default function solverFunc(size) {
     const size_sqr = size * size;
 

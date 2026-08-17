@@ -1,5 +1,3 @@
-"use strict";
-
 export default function presenterFunc(solver, settings) {
     const startRed = settings.color === "red";
     let currentUserIsRed = startRed;

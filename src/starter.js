@@ -1,5 +1,3 @@
-"use strict";
-
 import gameFunction from "./game.js";
 import setupSettings from "./utils/setup-settings.js";
 
