@@ -7,10 +7,8 @@
   "type": "module",
   "sideEffects": false,
   "scripts": {
-    "ws": "node devtools/ws-server.js",
     "dev": "webpack --mode development --watch",
     "start": "webpack serve --config webpack_configs/webpack.config.js --mode development",
-    "all": "npm-run-all -p -r ws start",
     "android": "webpack --config webpack_configs/android.webpack.config.js --mode production",
     "build": "webpack --config webpack_configs/production.webpack.config.js --mode production",
     "style": "npx eslint . -c linters/eslint.config.js",
@@ -24,9 +22,9 @@
     "updates:fix": "npx ncu -u && npm install"
   },
   "devDependencies": {
-    "netdeps": "github:asavan/net-deps#v0.0.3"
+    "devdeps": "github:asavan/dev-deps#v0.1.1"
   },
   "dependencies": {
-    "netutils": "github:asavan/netutils#v0.0.8"
+    "netutils": "github:asavan/netutils#847574bbd25f6f4188f5f0bba29352e05a261b50"
   }
 }

@@ -86,7 +86,7 @@ export default async function draw(presenter, box, digits) {
 
         if (used) {
             await delay(650);
-            if (document.startViewTransition) {
+            if (!document.hidden && document.startViewTransition) {
                 document.startViewTransition(() => {
                     // DOM mutation
                     tile.remove();

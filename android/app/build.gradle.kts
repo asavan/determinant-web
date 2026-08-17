@@ -4,14 +4,14 @@ plugins {
 
 android {
     namespace = "fun.determinant.asavan"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "fun.determinant.asavan"
         minSdk = 23
-        targetSdk = 36
-        versionCode = 19
-        versionName = "1.4.1"
+        targetSdk = 37
+        versionCode = 20
+        versionName = "1.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -28,6 +28,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

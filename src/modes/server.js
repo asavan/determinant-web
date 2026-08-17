@@ -1,8 +1,10 @@
-"use strict";
-
 import connectionFunc from "../connection/connection.js";
-import { getSocketUrl, getStaticUrl } from "../connection/common.js";
-import { makeQrPlainEl, removeElem } from "../views/qr_helper.js";
+
+import {
+    makeQrElement,
+    removeElem,
+    netObj
+} from "netutils";
 
 const SERVER_COLOR = "black";
 
@@ -17,24 +19,31 @@ function colorizePath(elem, color) {
 }
 
 function oneQrCode(url, code, color, qrcontainer, document) {
+    const image = {
+        source: "./images/sigma.svg",
+        width: "15%",
+        height: "15%",
+        x: "center",
+        y: "center",
+    };
     const element = document.createElement("div");
     element.classList.add("qrcode");
     qrcontainer.appendChild(element);
     url.searchParams.set("color", color);
     url.searchParams.set("mode", "net");
-    makeQrPlainEl(url.toString(), element, "./images/sigma.svg");
+    makeQrElement(url.toString(), element, image);
     colorizePath(element, color);
     code[color] = element;
 }
 
 export default function server(window, document, settings) {
-    const socketUrl = getSocketUrl(window.location, settings);
+    const socketUrl = netObj.getWebSocketUrl(settings, window.location);
     if (!socketUrl) {
         console.error("No ws");
         return;
     }
     const connection = connectionFunc(settings);
-    const staticHost = getStaticUrl(window.location, settings);
+    const staticHost = netObj.getHostUrl(settings, window.location);
     const code = {};
     {
         const url = new URL(staticHost);

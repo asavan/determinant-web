@@ -5,7 +5,7 @@ function stub(message) {
 let user = "";
 
 const handlers = {
-    "recv": stub,
+    "message": stub,
     "open": stub,
     "socket_open": stub,
     "socket_close": stub,
@@ -169,7 +169,7 @@ const connectionFunc = function (settings) {
     function setupDataChannel(c, signaling) {
         dataChannel = c;
         dataChannel.onmessage = function (e) {
-            handlers["recv"](e.data);
+            handlers["message"](e.data);
         };
 
         dataChannel.onopen = function () {
@@ -220,7 +220,7 @@ const connectionFunc = function (settings) {
         signaling?.close();
     };
 
-    return {connect, sendMessage, on, closeAll};
+    return {connect, sendMessage, send: sendMessage, on, closeAll};
 };
 
 export default connectionFunc;
