@@ -2,7 +2,7 @@ export default {
     modes: ["net", "ai", "hotseat", "server", "cheating", "auto"],
     mode: "auto",
     wsPort : 8080,
-    wsPath : "/",
+    wsPath : "/signaling",
     colors: ["blue", "red"],
     color: "blue",
     showMove: false,

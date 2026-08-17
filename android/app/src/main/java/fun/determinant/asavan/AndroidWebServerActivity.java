@@ -46,7 +46,6 @@ public class AndroidWebServerActivity extends Activity {
         {
             Map<String, String> b1 = new LinkedHashMap<>();
             b1.put("color", "red");
-            b1.put("wh", webSocketHost);
             b1.put("sh", host);
             b1.put("mode", "net");
             btnUtils.addButtonBrowser(host, b1, R.id.button1);
@@ -55,7 +54,6 @@ public class AndroidWebServerActivity extends Activity {
         {
             Map<String, String> b = new LinkedHashMap<>();
             b.put("color", "blue");
-            b.put("wh", webSocketHost);
             b.put("sh", host);
             b.put("mode", "net");
             btnUtils.addButtonTwa(hostUtils.getStaticHost(IpUtils.LOCALHOST), b, R.id.button5);
@@ -63,15 +61,14 @@ public class AndroidWebServerActivity extends Activity {
         {
             Map<String, String> b = new LinkedHashMap<>();
             b.put("color", "blue");
-            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCAL_IP));
             b.put("sh", host);
             b.put("mode", "net");
+            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCALHOST, true));
             btnUtils.addButtonWebView(WEB_VIEW_URL, b, R.id.button9);
         }
         {
             Map<String, String> b = new LinkedHashMap<>();
             b.put("color", "blue");
-            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCAL_IP));
             b.put("sh", host);
             b.put("mode", "cheating");
             btnUtils.addButtonTwa(hostUtils.getStaticHost(IpUtils.LOCALHOST), b, R.id.cfirst);
@@ -79,7 +76,6 @@ public class AndroidWebServerActivity extends Activity {
         {
             Map<String, String> b = new LinkedHashMap<>();
             b.put("color", "red");
-            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCAL_IP));
             b.put("sh", host);
             b.put("mode", "cheating");
             btnUtils.addButtonTwa(hostUtils.getStaticHost(IpUtils.LOCALHOST), b, R.id.csecond);

@@ -15,8 +15,11 @@ public class HostUtils {
         return makeProtocol("http", secure) + ip + ":" + static_content_port;
     }
 
-    public String getSocketHost(String ip) {
+    public String getSocketHost(String ip, boolean secure) {
         return makeProtocol("ws", secure) + ip + ":" + web_socket_port;
+    }
+    public String getSocketHost(String ip) {
+        return getSocketHost(ip, secure);
     }
 
     private static String makeProtocol(String base, boolean secure) {

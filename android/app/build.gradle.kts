@@ -10,8 +10,8 @@ android {
         applicationId = "fun.determinant.asavan"
         minSdk = 24
         targetSdk = 37
-        versionCode = 21
-        versionName = "1.6.0"
+        versionCode = 22
+        versionName = "1.5.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
