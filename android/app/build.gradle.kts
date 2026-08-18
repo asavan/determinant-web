@@ -10,8 +10,8 @@ android {
         applicationId = "fun.determinant.asavan"
         minSdk = 24
         targetSdk = 37
-        versionCode = 22
-        versionName = "1.5.2"
+        versionCode = 23
+        versionName = "1.5.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -45,6 +45,7 @@ dependencies {
     implementation(libs.org.nanohttpd.nanohttpd.websocket)
     implementation(libs.androidbrowserhelper)
     implementation(libs.webkit)
+    implementation(libs.ndefemulation.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)

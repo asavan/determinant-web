@@ -63,7 +63,7 @@ public class AndroidWebServerActivity extends Activity {
             b.put("color", "blue");
             b.put("sh", host);
             b.put("mode", "net");
-            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCALHOST, true));
+            b.put("wh", hostUtils.getSocketHost(IpUtils.LOCALHOST));
             btnUtils.addButtonWebView(WEB_VIEW_URL, b, R.id.button9);
         }
         {
